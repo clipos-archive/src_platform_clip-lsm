@@ -1,0 +1,2591 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Vincent Strubel <clipos@ssi.gouv.fr>
+Date: Fri, 2 Jan 2015 13:26:46 +0100
+Subject: [PATCH] clip-lsm: Apply CLIP LSM on top of grsecurity and VServer
+
+This patch is an experimental port to Linux 4.9
+
+Patch: clsm.patch
+---
+ arch/x86/kernel/ioport.c         |  10 +
+ drivers/base/firmware_class.c    |   4 +
+ drivers/char/mem.c               |  68 ++++++-
+ drivers/gpu/drm/drm_drv.c        |   4 +
+ drivers/gpu/drm/drm_ioctl.c      |   7 +
+ fs/binfmt_elf.c                  |   6 +
+ fs/block_dev.c                   |  10 +
+ fs/exec.c                        |  16 ++
+ fs/fcntl.c                       |   6 +
+ fs/fhandle.c                     |   4 +
+ fs/filesystems.c                 |   3 +
+ fs/namei.c                       |  19 ++
+ fs/namespace.c                   |  43 ++++
+ fs/notify/inotify/inotify_user.c |  11 +
+ fs/open.c                        |   6 +
+ fs/proc/array.c                  |   8 +-
+ fs/proc/base.c                   |  27 ++-
+ fs/proc/task_mmu.c               |   6 +-
+ fs/proc/task_nommu.c             |   2 +-
+ fs/proc_namespace.c              |   5 +
+ fs/super.c                       |  24 ++-
+ grsecurity/gracl.c               |   1 +
+ grsecurity/grsec_chroot.c        |  55 +++++
+ grsecurity/grsec_disabled.c      |   1 +
+ include/linux/fs.h               |   8 +
+ include/linux/grinternal.h       |   7 +
+ include/linux/lsm_hooks.h        |  76 +++++++
+ include/linux/mount.h            |   6 +
+ include/linux/ptrace.h           |   1 +
+ include/linux/security.h         |   8 +
+ include/linux/sysctl.h           |   4 +
+ include/linux/uio.h              |   3 +
+ include/uapi/linux/fs.h          |   5 +
+ kernel/capability.c              |  19 +-
+ kernel/cred.c                    |   1 +
+ kernel/fork.c                    |  10 +
+ kernel/groups.c                  |  18 +-
+ kernel/nsproxy.c                 |  11 +
+ kernel/printk/printk.c           |   4 +
+ kernel/ptrace.c                  |  18 ++
+ kernel/signal.c                  |  17 ++
+ kernel/sys.c                     | 146 ++++++++++++-
+ kernel/sysctl.c                  |  53 +++++
+ kernel/vserver/context.c         |  27 +++
+ kernel/vserver/space.c           |   9 +
+ mm/filemap.c                     |  30 ++-
+ mm/mmap.c                        |   7 +
+ mm/mprotect.c                    |  11 +
+ mm/oom_kill.c                    |   8 +
+ mm/swapfile.c                    |   5 +
+ mm/util.c                        |   3 +
+ net/xfrm/xfrm_policy.c           |   7 +
+ net/xfrm/xfrm_state.c            |   8 +
+ security/Kconfig                 |   2 +
+ security/Makefile                |   3 +
+ security/commoncap.c             |   2 +-
+ security/min_addr.c              |   1 +
+ security/security.c              | 339 +++++++++++++++++++++++++++++++
+ 58 files changed, 1198 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
+index 367e6ce63f9ff..9f795dddeae55 100644
+--- a/arch/x86/kernel/ioport.c
++++ b/arch/x86/kernel/ioport.c
+@@ -29,8 +29,13 @@ SYSCALL_DEFINE3(ioperm, unsigned long, from, unsigned long, num, int, turn_on)
+ 
+ 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
+ 		return -EINVAL;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (turn_on && security_mem_access(NULL, SECURITY_IO_IOPERM))
++		return -EPERM;
++#else
+ 	if (turn_on && !capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
++#endif
+ #ifdef CONFIG_GRKERNSEC_IO
+ 	if (turn_on && grsec_disable_privio) {
+ 		gr_handle_ioperm();
+@@ -115,8 +120,13 @@ SYSCALL_DEFINE1(iopl, unsigned int, level)
+ 		return -EINVAL;
+ 	/* Trying to gain more privileges? */
+ 	if (level > old) {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		if (security_mem_access(NULL, SECURITY_IO_IOPL))
++			return -EPERM;
++#else
+ 		if (!capable(CAP_SYS_RAWIO))
+ 			return -EPERM;
++#endif
+ #ifdef CONFIG_GRKERNSEC_IO
+ 		if (grsec_disable_privio) {
+ 			gr_handle_iopl();
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index a95e1e572697d..adea3ebe9b57e 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -837,7 +837,11 @@ static ssize_t firmware_data_write(struct file *filp, struct kobject *kobj,
+ 	struct firmware_buf *buf;
+ 	ssize_t retval;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_firmware_write())
++#else
+ 	if (!capable(CAP_SYS_RAWIO))
++#endif
+ 		return -EPERM;
+ 
+ 	mutex_lock(&fw_lock);
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index fed3219eefa7a..84b5ddf8c28e7 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -29,6 +29,9 @@
+ #include <linux/export.h>
+ #include <linux/io.h>
+ #include <linux/uio.h>
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -131,6 +134,12 @@ static ssize_t read_mem(struct file *file, char __user *buf,
+ 
+ 	if (!valid_phys_addr_range(p, count))
+ 		return -EFAULT;
++
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_mem_access(file, SECURITY_MEM_READ))
++		return -EPERM;
++#endif
++
+ 	read = 0;
+ #ifdef __ARCH_HAS_NO_PAGE_ZERO_MAPPED
+ 	/* we don't have page 0 mapped on sparc and m68k.. */
+@@ -214,6 +223,11 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
+ 	if (!valid_phys_addr_range(p, count))
+ 		return -EFAULT;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_mem_access(file, SECURITY_MEM_WRITE))
++		return -EPERM;
++#endif
++
+ 	written = 0;
+ 
+ #ifdef __ARCH_HAS_NO_PAGE_ZERO_MAPPED
+@@ -391,6 +405,11 @@ static int mmap_mem(struct file *file, struct vm_area_struct *vma)
+ 						&vma->vm_page_prot))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_mem_access(file, SECURITY_MEM_MMAP))
++		return -EPERM;
++#endif
++
+ 	vma->vm_page_prot = phys_mem_access_prot(file, vma->vm_pgoff,
+ 						 size,
+ 						 vma->vm_page_prot);
+@@ -425,6 +444,11 @@ static int mmap_kmem(struct file *file, struct vm_area_struct *vma)
+ 	if (!pfn_valid(pfn))
+ 		return -EIO;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_mem_access(file, SECURITY_KMEM_MMAP))
++		return -EPERM;
++#endif
++
+ 	vma->vm_pgoff = pfn;
+ 	return mmap_mem(file, vma);
+ }
+@@ -440,6 +464,11 @@ static ssize_t read_kmem(struct file *file, char __user *buf,
+ 	char *kbuf; /* k-addr because vread() takes vmlist_lock rwlock */
+ 	int err = 0;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_mem_access(file, SECURITY_KMEM_READ))
++		return -EPERM;
++#endif
++
+ 	read = 0;
+ 	if (p < (unsigned long) high_memory) {
+ 		char *temp;
+@@ -583,6 +612,11 @@ static ssize_t write_kmem(struct file *file, const char __user *buf,
+ 	char *kbuf; /* k-addr because vwrite() takes vmlist_lock rwlock */
+ 	int err = 0;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_mem_access(file, SECURITY_KMEM_WRITE))
++		return -EPERM;
++#endif
++
+ 	if (p < (unsigned long) high_memory) {
+ 		unsigned long to_write = min_t(unsigned long, count,
+ 					       (unsigned long)high_memory - p);
+@@ -808,15 +842,31 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
+ 
+ static int open_port(struct inode *inode, struct file *filp)
+ {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++       if (security_mem_access(filp, SECURITY_PORT_OPEN))
++               return -EPERM;
++#endif
++
+ 	return capable(CAP_SYS_RAWIO) ? 0 : -EPERM;
+ }
+ 
++static int open_mem(struct inode * inode, struct file * filp)
++{
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++       if (security_mem_access(filp, SECURITY_MEM_OPEN))
++               return -EPERM;
++       else
++               return 0;
++#else
++       return capable(CAP_SYS_RAWIO) ? 0 : -EPERM;
++#endif
++}
++
+ #define zero_lseek	null_lseek
+ #define full_lseek      null_lseek
+ #define write_zero	write_null
+ #define write_iter_zero	write_iter_null
+-#define open_mem	open_port
+-#define open_kmem	open_mem
++#define open_kmem	open_port
+ 
+ static const struct file_operations __maybe_unused mem_fops = {
+ 	.llseek		= memory_lseek,
+@@ -910,8 +960,17 @@ static int memory_open(struct inode *inode, struct file *filp)
+ 	const struct memdev *dev;
+ 
+ 	minor = iminor(inode);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (minor >= ARRAY_SIZE(devlist)) {
++		int ret = security_inode_memdev_open(inode, filp);
++		if (!ret && filp->f_op && filp->f_op->open)
++			ret = filp->f_op->open(inode, filp);
++		return ret;
++	}
++#else
+ 	if (minor >= ARRAY_SIZE(devlist))
+ 		return -ENXIO;
++#endif
+ 
+ 	dev = &devlist[minor];
+ 	if (!dev->fops)
+@@ -938,7 +997,12 @@ static char *mem_devnode(struct device *dev, umode_t *mode)
+ 	return NULL;
+ }
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++struct class *mem_class;
++EXPORT_SYMBOL(mem_class);
++#else /* CONFIG_CLIP_LSM_SUPPORT */
+ static struct class *mem_class;
++#endif /* CONFIG_CLIP_LSM_SUPPORT */
+ 
+ static int __init chr_dev_init(void)
+ {
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 98dd12387bea9..d885e4aa1b462 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -26,6 +26,10 @@
+  * DEALINGS IN THE SOFTWARE.
+  */
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
++
+ #include <linux/debugfs.h>
+ #include <linux/fs.h>
+ #include <linux/module.h>
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index 12e69dd8f6339..97e33d672f845 100644
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -36,6 +36,7 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/export.h>
++#include <linux/security.h>
+ 
+ /**
+  * DOC: getunique and setversion story
+@@ -480,9 +481,15 @@ static int drm_version(struct drm_device *dev, void *data,
+  */
+ int drm_ioctl_permit(u32 flags, struct drm_file *file_priv)
+ {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	/* ROOT_ONLY is only for CAP_SYS_ADMIN or CLSM privileged */
++	if (unlikely((flags & DRM_ROOT_ONLY) && security_drm_access(flags)))
++		return -EACCES;
++#else
+ 	/* ROOT_ONLY is only for CAP_SYS_ADMIN */
+ 	if (unlikely((flags & DRM_ROOT_ONLY) && !capable(CAP_SYS_ADMIN)))
+ 		return -EACCES;
++#endif
+ 
+ 	/* AUTH is only for authenticated or render client */
+ 	if (unlikely((flags & DRM_AUTH) && !drm_is_render_client(file_priv) &&
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 9a8130b6e93d7..33b74b8787aaa 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1126,6 +1126,12 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 			 */
+ 			would_dump(bprm, interpreter);
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++                       retval = security_file_interpreter(bprm, interpreter);
++                       if (retval)
++                               goto out_free_dentry;
++#endif
++
+ 			/* Get the exec headers */
+ 			retval = kernel_read(interpreter, 0,
+ 					     (void *)&loc->interp_elf_ex,
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index d3509a66fa3ea..5c8513454c992 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -34,6 +34,9 @@
+ #include <linux/vs_device.h>
+ #include <asm/uaccess.h>
+ #include "internal.h"
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
+ 
+ struct bdev_inode {
+ 	struct block_device bdev;
+@@ -1272,6 +1275,13 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
+ 		goto out;
+ 	owner = disk->fops->owner;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_inode_blkdev_open(bdev->bd_inode, mode)) {
++		ret = -EPERM;
++		goto out;
++	}
++#endif
++
+ 	disk_block_events(disk);
+ 	mutex_lock_nested(&bdev->bd_mutex, for_part);
+ 	if (!bdev->bd_openers) {
+diff --git a/fs/exec.c b/fs/exec.c
+index ba05becdbf0c0..37483d5ec6a71 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1607,7 +1607,11 @@ static void bprm_fill_uid(struct linux_binprm *bprm)
+ 		 !kgid_has_mapping(bprm->cred->user_ns, gid))
+ 		return;
+ 
++#ifdef CONFIG_CLSM_NOSUID_ROOT
++	if ((mode & S_ISUID) && !uid_eq(inode->i_uid, GLOBAL_ROOT_UID)) {
++#else
+ 	if (mode & S_ISUID) {
++#endif /* CONFIG_CLSM_NOSUID_ROOT */
+ 		bprm->per_clear |= PER_CLEAR_ON_SETID;
+ 		bprm->cred->euid = uid;
+ 	}
+@@ -1836,6 +1840,9 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	if (!bprm)
+ 		goto out_files;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	retval = prepare_bprm_creds(bprm);
+ 	if (retval)
+ 		goto out_free;
+@@ -1975,6 +1982,9 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	putname(filename);
+ 	if (displaced)
+ 		put_files_struct(displaced);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ 
+ out_fail:
+@@ -1996,6 +2006,9 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	current->in_execve = 0;
+ 
+ out_free:
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	free_bprm(bprm);
+ 	kfree(pathbuf);
+ 
+@@ -2088,6 +2101,9 @@ void set_dumpable(struct mm_struct *mm, int value)
+ 		new = (old & ~MMF_DUMPABLE_MASK) | value;
+ 	} while (cmpxchg(&mm->flags, old, new) != old);
+ }
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++EXPORT_SYMBOL(set_dumpable);
++#endif
+ 
+ SYSCALL_DEFINE3(execve,
+ 		const char __user *, filename,
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index a1a4cf23b4545..29393978e7640 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -320,7 +320,13 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 		if (!valid_signal(arg)) {
+ 			break;
+ 		}
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		err = security_file_fsignum(filp, arg);
++		if (err)
++			break;
++#else
+ 		err = 0;
++#endif
+ 		filp->f_owner.signum = arg;
+ 		break;
+ 	case F_GETLEASE:
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 0c5456e096419..6281d85801b98 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -203,6 +203,10 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+ 		goto out_handle;
+ 	}
+ 
++	retval = security_fhandle_to_path(mountdirfd, handle);
++	if (retval)
++		goto out_handle;
++
+ 	retval = do_handle_to_path(mountdirfd, handle, path);
+ 
+ out_handle:
+diff --git a/fs/filesystems.c b/fs/filesystems.c
+index 50c38f47c02a6..bfcb238c1c701 100644
+--- a/fs/filesystems.c
++++ b/fs/filesystems.c
+@@ -42,6 +42,9 @@ void put_filesystem(struct file_system_type *fs)
+ {
+ 	module_put(fs->owner);
+ }
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++EXPORT_SYMBOL(put_filesystem);
++#endif
+ 
+ static struct file_system_type **find_filesystem(const char *name, unsigned len)
+ {
+diff --git a/fs/namei.c b/fs/namei.c
+index bbc2164cd7f55..fca50313d72a4 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -47,6 +47,8 @@
+ #include <linux/vs_context.h>
+ #include <linux/pid_namespace.h>
+ #include <asm/uaccess.h>
++#include <linux/magic.h>
++#include <linux/proc_ns.h>
+ 
+ #include <linux/major.h>
+ #define PTMX_MINOR	2
+@@ -1950,6 +1952,15 @@ static inline int should_follow_link(struct nameidata *nd, struct path *link,
+ 		return 0;
+ 	if (!follow)
+ 		return 0;
++
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	/* CLIP-TODO : check */
++	if (link->mnt && unlikely(link->mnt->mnt_flags & MNT_NOSYMFOLLOW)) {
++		  path_to_nameidata(link, nd);
++		  return -ENOENT;
++	}
++#endif
++
+ 	/* make sure that d_is_symlink above matches inode */
+ 	if (nd->flags & LOOKUP_RCU) {
+ 		if (read_seqcount_retry(&link->dentry->d_seq, seq))
+@@ -3232,7 +3243,11 @@ static inline int open_to_namei_flags(int flag)
+ 	return flag;
+ }
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t mode, struct nameidata *nd)
++#else
+ static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t mode)
++#endif
+ {
+ 	struct user_namespace *s_user_ns;
+ 	int error = security_path_mknod(dir, dentry, mode, 0);
+@@ -3404,7 +3419,11 @@ static int lookup_open(struct nameidata *nd, struct path *path,
+ 				goto no_open;
+ 			/* No side effects, safe to clear O_CREAT */
+ 		} else {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++			create_error = may_o_create(&nd->path, dentry, mode, nd);
++#else
+ 			create_error = may_o_create(&nd->path, dentry, mode);
++#endif
+ 			if (create_error) {
+ 				open_flag &= ~O_CREAT;
+ 				if (open_flag & O_EXCL)
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d6f9708991740..e40a221bf6b02 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -977,7 +977,11 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void
+ 		return ERR_PTR(-ENODEV);
+ 
+ 	if ((type->fs_flags & FS_BINARY_MOUNTDATA) &&
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	    security_sb_mount_permission(SECURITY_MOUNT_BINARY, NULL))
++#else
+ 	    !vx_capable(CAP_SYS_ADMIN, VXC_BINARY_MOUNT))
++#endif
+ 		return ERR_PTR(-EPERM);
+ 
+ 	mnt = alloc_vfsmnt(name);
+@@ -1702,6 +1706,12 @@ SYSCALL_DEFINE2(umount, const char __user *, name, int, flags)
+ 	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
+ 		goto dput_and_out;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	retval = -EPERM;
++	if (security_sb_mount_permission(SECURITY_MOUNT_UMOUNT, &path))
++		goto dput_and_out;
++#endif
++
+ 	retval = do_umount(mnt, flags);
+ dput_and_out:
+ 	/* we mustn't call path_put() as that would clear mnt_expiry_mark */
+@@ -2117,6 +2127,11 @@ static int graft_tree(struct mount *mnt, struct mount *p, struct mountpoint *mp)
+ 	      d_is_dir(mnt->mnt.mnt_root))
+ 		return -ENOTDIR;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_sb_check_sb(&(mnt->mnt), mp->m_dentry))
++		return -EPERM;
++#endif
++
+ 	return attach_recursive_mnt(mnt, p, mp, NULL);
+ }
+ 
+@@ -2148,6 +2163,11 @@ static int do_change_type(struct path *path, int flag)
+ 	int type;
+ 	int err = 0;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_sb_mount_permission(SECURITY_MOUNT_TYPE, path))
++		return -EPERM;
++#endif
++
+ 	if (path->dentry != path->mnt->mnt_root)
+ 		return -EINVAL;
+ 
+@@ -2284,6 +2304,11 @@ static int do_remount(struct path *path, int flags, int mnt_flags,
+ 	struct super_block *sb = path->mnt->mnt_sb;
+ 	struct mount *mnt = real_mount(path->mnt);
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_sb_mount_permission(SECURITY_MOUNT_REMOUNT, path))
++		return -EPERM;
++#endif
++
+ 	if (!check_mnt(mnt))
+ 		return -EINVAL;
+ 
+@@ -2356,6 +2381,11 @@ static int do_move_mount(struct path *path, const char *old_name)
+ 	struct mount *old;
+ 	struct mountpoint *mp;
+ 	int err;
++
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_sb_mount_permission(SECURITY_MOUNT_REMOUNT, path))
++		return -EPERM;
++#endif
+ 	if (!old_name || !*old_name)
+ 		return -EINVAL;
+ 	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
+@@ -2506,6 +2536,11 @@ static int do_new_mount(struct path *path, const char *fstype, int flags,
+ 	if (!type)
+ 		return -ENODEV;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_sb_mount_permission(SECURITY_MOUNT_NEW, path))
++		return -EPERM;
++#endif
++
+ 	mnt = vfs_kern_mount(type, flags, name, data);
+ 	if (!IS_ERR(mnt) && (type->fs_flags & FS_HAS_SUBTYPE) &&
+ 	    !mnt->mnt_sb->s_subtype)
+@@ -2812,6 +2847,14 @@ long do_mount(const char *dev_name, const char __user *dir_name,
+ 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
+ 	if (flags & MS_RDONLY)
+ 		mnt_flags |= MNT_READONLY;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (flags & MS_NOSYMFOLLOW)
++		mnt_flags |= MNT_NOSYMFOLLOW;
++	if (flags & MS_NOLOCK)
++		mnt_flags |= MNT_NOLOCK;
++	if (flags & MS_TRACE)
++		mnt_flags |= MNT_TRACE;
++#endif
+ 
+ 	/* The default atime for remount is preservation */
+ 	if ((flags & MS_REMOUNT) &&
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 69d1ea3d292a8..7ac3267a4f37e 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -38,6 +38,9 @@
+ #include <linux/uaccess.h>
+ #include <linux/poll.h>
+ #include <linux/wait.h>
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
+ 
+ #include "inotify.h"
+ #include "../fdinfo.h"
+@@ -741,6 +744,14 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	if (ret)
+ 		goto fput_and_out;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	ret = security_inotify_addwatch(&path);
++	if (unlikely(ret)) {
++		path_put(&path);
++		goto fput_and_out;
++	}
++#endif
++
+ 	/* inode held in place by reference to path; group by fget on fd */
+ 	inode = path.dentry->d_inode;
+ 	group = f.file->private_data;
+diff --git a/fs/open.c b/fs/open.c
+index 1388295b2c2ed..b8705c85ad679 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -535,6 +535,12 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
+ 	if (gr_handle_chroot_chroot(path.dentry, path.mnt))
+ 		goto dput_and_out;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	error = security_task_chroot();
++	if (error)
++		goto dput_and_out;
++#endif
++
+ 	set_fs_root(current->fs, &path);
+ 
+ 	gr_handle_chroot_chdir(&path);
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index e273c178cc3c0..a1481475facea 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -88,6 +88,9 @@
+ #include <linux/fs_struct.h>
+ #include <linux/vs_context.h>
+ #include <linux/vs_network.h>
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
+ 
+ #include <asm/pgtable.h>
+ #include <asm/processor.h>
+@@ -457,6 +460,9 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ #if defined(CONFIG_PAX_NOEXEC) || defined(CONFIG_PAX_ASLR)
+ 	task_pax(m, task);
+ #endif
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	security_task_proc_pid(m, task);
++#endif
+ 
+ #if defined(CONFIG_GRKERNSEC) && !defined(CONFIG_GRKERNSEC_NO_RBAC)
+ 	task_grsec_rbac(m, task);
+@@ -501,7 +507,7 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 
+ 	state = *get_task_state(task);
+ 	vsize = eip = esp = 0;
+-	permitted = ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS | PTRACE_MODE_NOAUDIT);
++	permitted = ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS | PTRACE_MODE_NOAUDIT | PTRACE_MODE_PROCFD);
+ 	mm = get_task_mm(task);
+ 	if (mm) {
+ 		vsize = task_vsize(mm);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 6c2cf20f85e67..3d47cf582608b 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -435,7 +435,7 @@ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
+ 	wchan = get_wchan(task);
+ 
+ 	if (wchan && !lookup_symbol_name(wchan, symname)
+-	    		&& ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
++			&& ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS|PTRACE_MODE_PROCFD))
+ 		seq_printf(m, "%s", symname);
+ 	else
+ 		seq_putc(m, '0');
+@@ -700,9 +700,9 @@ static int proc_fd_access_allowed(struct inode *inode, unsigned int log)
+ 	task = get_proc_task(inode);
+ 	if (task) {
+ 		if (log)
+-			allowed = ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
++			allowed = ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS|PTRACE_MODE_PROCFD);
+ 		else
+-			allowed = ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS | PTRACE_MODE_NOAUDIT);
++			allowed = ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS | PTRACE_MODE_NOAUDIT|PTRACE_MODE_PROCFD);
+ 		put_task_struct(task);
+ 	}
+ 	return allowed;
+@@ -1020,6 +1020,7 @@ static const struct file_operations proc_mem_operations = {
+ 
+ static int environ_open(struct inode *inode, struct file *file)
+ {
++	/* CLIP : no PTRACE_MODE_PROCFD here - check */
+ 	return __mem_open(inode, file, PTRACE_MODE_READ);
+ }
+ 
+@@ -1105,7 +1106,7 @@ static const struct file_operations proc_environ_operations = {
+ 
+ static int auxv_open(struct inode *inode, struct file *file)
+ {
+-	return __mem_open(inode, file, PTRACE_MODE_READ_FSCREDS);
++	return __mem_open(inode, file, PTRACE_MODE_READ_FSCREDS | PTRACE_MODE_PROCFD);
+ }
+ 
+ static ssize_t auxv_read(struct file *file, char __user *buf,
+@@ -1177,6 +1178,14 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+ 		return -ESRCH;
+ 
+ 	mutex_lock(&oom_adj_mutex);
++
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_task_oomadj(task, oom_adj)) {
++		err = -EACCES;
++		goto err_unlock;
++	}
++#endif
++
+ 	if (legacy) {
+ 		if (oom_adj < task->signal->oom_score_adj &&
+ 		    !vx_capable(CAP_SYS_RESOURCE, VXC_OOM_ADJUST)) {
+@@ -2580,7 +2589,12 @@ static struct dentry *proc_pident_lookup(struct inode *dir,
+ 	if (!task)
+ 		goto out_no_task;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	/* task->pid != 1 check needed for /proc/self in a vserver jail */
++	if (task->pid != 1 && (gr_pid_is_chrooted(task) || gr_check_hidden_task(task)))
++#else
+ 	if (gr_pid_is_chrooted(task) || gr_check_hidden_task(task))
++#endif
+ 		goto out;
+ 
+ 	/* TODO: maybe we can come up with a generic approach? */
+@@ -2620,7 +2634,12 @@ static int proc_pident_readdir(struct file *file, struct dir_context *ctx,
+ 	if (!task)
+ 		return -ENOENT;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	/* task->pid != 1 check needed for /proc/self in a vserver jail */
++	if (task->pid != 1 && (gr_pid_is_chrooted(task) || gr_check_hidden_task(task)))
++#else
+ 	if (gr_pid_is_chrooted(task) || gr_check_hidden_task(task))
++#endif
+ 		goto out;
+ 
+ 	if (!dir_emit_dots(file, ctx))
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index b1aa8042308f5..bbb47866ac155 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -257,9 +257,9 @@ static int proc_maps_open(struct inode *inode, struct file *file,
+ 
+ 	priv->inode = inode;
+ #ifdef CONFIG_GRKERNSEC_PROC_MEMMAP
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ, &priv->ptracer_exec_id);
++	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ | PTRACE_MODE_PROCFD, &priv->ptracer_exec_id);
+ #else
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ, NULL);
++	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ | PTRACE_MODE_PROCFD, NULL);
+ #endif
+ 	if (IS_ERR(priv->mm)) {
+ 		int err = PTR_ERR(priv->mm);
+@@ -1495,7 +1495,7 @@ static int pagemap_open(struct inode *inode, struct file *file)
+ {
+ 	struct mm_struct *mm;
+ 
+-	mm = proc_mem_open(inode, PTRACE_MODE_READ, NULL);
++	mm = proc_mem_open(inode, PTRACE_MODE_READ | PTRACE_MODE_PROCFD, NULL);
+ 	if (IS_ERR(mm))
+ 		return PTR_ERR(mm);
+ 	file->private_data = mm;
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index b6237abf79727..4eeccf2bc27db 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -280,7 +280,7 @@ static int maps_open(struct inode *inode, struct file *file,
+ 		return -ENOMEM;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ, NULL);
++	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ | PTRACE_MODE_PROCFD, NULL);
+ 	if (IS_ERR(priv->mm)) {
+ 		int err = PTR_ERR(priv->mm);
+ 
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 8cd606b8704fe..1bd6678bd37e8 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -69,6 +69,11 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_NOATIME, ",noatime" },
+ 		{ MNT_NODIRATIME, ",nodiratime" },
+ 		{ MNT_RELATIME, ",relatime" },
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
++		{ MNT_NOLOCK, ",nolock" },
++		{ MNT_TRACE,  ",trace" },
++#endif
+ 		{ 0, NULL }
+ 	};
+ 	const struct proc_fs_info *fs_infop;
+diff --git a/fs/super.c b/fs/super.c
+index de5c12b96fd85..295dee0d273f2 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -40,7 +40,13 @@
+ 
+ 
+ static LIST_HEAD(super_blocks);
++// FIXME/CLIP: Keep sb_lock as static or add functions to take/release?
++#ifndef CONFIG_CLIP_LSM_SUPPORT
+ static DEFINE_SPINLOCK(sb_lock);
++#else
++DEFINE_SPINLOCK(sb_lock);
++EXPORT_SYMBOL(sb_lock);
++#endif
+ 
+ static char *sb_writers_name[SB_FREEZE_LEVELS] = {
+ 	"sb_writers",
+@@ -269,13 +275,19 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ /*
+  * Drop a superblock's refcount.  The caller must hold sb_lock.
+  */
+-static void __put_super(struct super_block *sb)
++#ifndef CONFIG_CLIP_LSM_SUPPORT
++static
++#endif
++void __put_super(struct super_block *sb)
+ {
+ 	if (!--sb->s_count) {
+ 		list_del_init(&sb->s_list);
+ 		destroy_super(sb);
+ 	}
+ }
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++EXPORT_SYMBOL(__put_super);
++#endif
+ 
+ /**
+  *	put_super	-	drop a temporary reference to superblock
+@@ -758,6 +770,9 @@ struct super_block *user_get_super(dev_t dev)
+ 	spin_unlock(&sb_lock);
+ 	return NULL;
+ }
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++EXPORT_SYMBOL(user_get_super);
++#endif
+ 
+ /**
+  *	do_remount_sb - asks filesystem to change mount options.
+@@ -1196,10 +1211,17 @@ mount_fs(struct file_system_type *type, int flags, const char *name, void *data)
+ 	sb->s_flags |= MS_BORN;
+ 
+ 	error = -EPERM;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (!sb->s_bdev &&
++		(sb->s_magic != PROC_SUPER_MAGIC) &&
++		(sb->s_magic != DEVPTS_SUPER_MAGIC) &&
++		security_sb_mount_permission(SECURITY_MOUNT_BINARY, NULL))
++#else
+ 	if (!vx_capable(CAP_SYS_ADMIN, VXC_BINARY_MOUNT) &&
+ 		!sb->s_bdev &&
+ 		(sb->s_magic != PROC_SUPER_MAGIC) &&
+ 		(sb->s_magic != DEVPTS_SUPER_MAGIC))
++#endif
+ 		goto out_sb;
+ 
+ 	error = security_sb_kern_mount(sb, flags, secdata);
+diff --git a/grsecurity/gracl.c b/grsecurity/gracl.c
+index fa03095d6b943..96b0cd6618724 100644
+--- a/grsecurity/gracl.c
++++ b/grsecurity/gracl.c
+@@ -2769,5 +2769,6 @@ EXPORT_SYMBOL_GPL(gr_acl_is_enabled);
+ #ifdef CONFIG_SECURITY
+ EXPORT_SYMBOL_GPL(gr_check_user_change);
+ EXPORT_SYMBOL_GPL(gr_check_group_change);
++EXPORT_SYMBOL_GPL(gr_acl_enable_at_secure);
+ #endif
+ 
+diff --git a/grsecurity/grsec_chroot.c b/grsecurity/grsec_chroot.c
+index 1964ab1c888e9..85bb1264a9aed 100644
+--- a/grsecurity/grsec_chroot.c
++++ b/grsecurity/grsec_chroot.c
+@@ -128,6 +128,57 @@ void gr_clear_chroot_entries(struct task_struct *task)
+ 	return;
+ }	
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
++
++#ifdef CONFIG_CLSM_CHROOT_GRSEC
++#ifdef CONFIG_VSERVER
++#include <linux/vs_context.h>
++#include <linux/pid_namespace.h>
++static inline void
++get_realroot(struct path *path)
++{
++	struct dentry *root;
++	struct vfsmount *mnt;
++	struct vx_info *vxi = task_get_vx_info(current);
++	if (!vxi) {
++		struct task_struct *reaper =
++			task_active_pid_ns(current)->child_reaper;
++
++		spin_lock(&reaper->fs->lock);
++		mnt = mntget(reaper->fs->root.mnt);
++		root = dget(reaper->fs->root.dentry);
++		spin_unlock(&reaper->fs->lock);
++	} else {
++		spin_lock(&vxi->space[0].vx_fs->lock);
++		mnt = mntget(vxi->space[0].vx_fs->root.mnt);
++		root = dget(vxi->space[0].vx_fs->root.dentry);
++		spin_unlock(&vxi->space[0].vx_fs->lock);
++		put_vx_info(vxi);
++	}
++	path->dentry = root;
++	path->mnt = mnt;
++}
++
++#else /* !CONFIG_VSERVER */
++static inline void
++get_realroot(struct path *path)
++{
++	struct dentry *root;
++	struct vfsmount *mnt;
++	struct task_struct *reaper =
++			task_active_pid_ns(current)->child_reaper;
++	spin_lock(&reaper->fs->lock);
++	mnt = mntget(reaper->fs->root->mnt);
++	root = dget(reaper->fs->root->dentry);
++	spin_unlock(&reaper->fs->lock);
++	path->dentry = root;
++	path->mnt = mnt;
++}
++#endif /* !CONFIG_VSERVER */
++#endif /* CONFIG_CLSM_CHROOT_GRSEC */
++
+ int
+ gr_handle_chroot_unix(const pid_t pid)
+ {
+@@ -228,7 +279,11 @@ int gr_is_outside_chroot(const struct dentry *u_dentry, const struct vfsmount *u
+ 
+ 	path.dentry = (struct dentry *)u_dentry;
+ 	path.mnt = (struct vfsmount *)u_mnt;
++#ifdef CONFIG_CLSM_CHROOT_GRSEC
++	get_realroot(&currentroot);
++#else
+ 	get_fs_root(current->fs, &currentroot);
++#endif
+ 	if (path_is_under(&path, &currentroot))
+ 		ret = 1;
+ 	path_put(&currentroot);
+diff --git a/grsecurity/grsec_disabled.c b/grsecurity/grsec_disabled.c
+index ba8d9971ed37f..e378e4d1ab921 100644
+--- a/grsecurity/grsec_disabled.c
++++ b/grsecurity/grsec_disabled.c
+@@ -442,4 +442,5 @@ void gr_put_exec_file(struct task_struct *task)
+ #ifdef CONFIG_SECURITY
+ EXPORT_SYMBOL_GPL(gr_check_user_change);
+ EXPORT_SYMBOL_GPL(gr_check_group_change);
++EXPORT_SYMBOL_GPL(gr_acl_enable_at_secure);
+ #endif
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1ea5c7ec3b2d3..0b1a75a238c15 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2672,8 +2672,16 @@ static inline void file_end_write(struct file *file)
+  * use {get,deny}_write_access() - these functions check the sign and refuse
+  * to do the change if sign is wrong.
+  */
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++extern int security_inode_write_access(struct inode *inode);
++#endif
+ static inline int get_write_access(struct inode *inode)
+ {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_inode_write_access(inode)) {
++		return -EPERM;
++	}
++#endif
+ 	return atomic_inc_unless_negative(&inode->i_writecount) ? 0 : -ETXTBSY;
+ }
+ static inline int deny_write_access(struct file *file)
+diff --git a/include/linux/grinternal.h b/include/linux/grinternal.h
+index 1dbf9c87108ec..8496441663ad3 100644
+--- a/include/linux/grinternal.h
++++ b/include/linux/grinternal.h
+@@ -9,6 +9,9 @@
+ #include <linux/gracl.h>
+ #include <linux/grdefs.h>
+ #include <linux/grmsg.h>
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security_clsm.h>
++#endif
+ 
+ void gr_add_learn_entry(const char *fmt, ...)
+ 	__attribute__ ((format (printf, 1, 2)));
+@@ -109,7 +112,11 @@ extern rwlock_t grsec_exec_file_lock;
+ 			gr_to_filename1((tsk)->real_parent->exec_file->f_path.dentry, \
+ 			(tsk)->real_parent->exec_file->f_path.mnt) : "/")
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#define proc_is_chrooted(tsk_a) security_task_chrooted(tsk_a)
++#else
+ #define proc_is_chrooted(tsk_a)  ((tsk_a)->gr_is_chrooted)
++#endif
+ 
+ #define have_same_root(tsk_a,tsk_b) ((tsk_a)->gr_chroot_dentry == (tsk_b)->gr_chroot_dentry)
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 91278953023c1..f9828fc3f6095 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1652,6 +1652,44 @@ union security_list_options {
+ 				struct audit_context *actx);
+ 	void (*audit_rule_free)(void *lsmrule);
+ #endif /* CONFIG_AUDIT */
++#ifdef CONFIG_CLIP_LSM_SUPPORT /* CLIP LSM specific Hooks */
++#ifdef CONFIG_VERIEXEC
++	int (*fhandle_to_path)(int dirfd, struct file_handle *handle);
++	int (*file_map_exec)(struct vm_area_struct *vma);
++	int (*file_interpreter)(struct linux_binprm *bprm, struct file *interp);
++#endif
++	int (*file_fsignum)(struct file *filp, int sig);
++	int (*file_swapon)(struct file *filp, const char *name);
++	int (*mem_access)(struct file *filp, int op);
++	int (*drm_access)(int flags);
++#ifdef CONFIG_CLSM_MOUNT
++	int (*inode_blkdev_open)(struct inode *inode, int mask);
++#endif
++	int (*inode_memdev_open)(struct inode *inode, struct file *file);
++#ifdef CONFIG_VERIEXEC
++	int (*inode_write_access)(struct inode *inode);
++	int (*inode_privileged_binary)(const struct dentry *dentry);
++#endif
++#ifdef CONFIG_VSERVER
++	struct cred *(*task_ctx_migrate)(struct task_struct *tsk);
++	int (*task_ctx_migrated)(void);
++	int (*task_kill_vserver)(struct task_struct *p, struct task_struct *c, int sig);
++	int (*task_chroot)(void);
++	int (*task_chrooted)(const struct task_struct *tsk);
++	int (*task_unshare_ns)(unsigned long flags);
++	unsigned long (*task_badness)(const struct task_struct *tsk);
++	int (*task_oomadj)(const struct task_struct *tsk, int adj);
++	void (*task_proc_pid)(struct seq_file *m, struct task_struct *tsk);
++	int (*task_procfd)(struct task_struct *c, int log);
++	int (*xfrm_policy_add)(int dir, struct xfrm_policy *xp);
++	int (*xfrm_state_add)(struct xfrm_state *x);
++	int (*sb_check_sb)(struct vfsmount *mnt, struct dentry *dentry);
++	int (*sb_mount_permission)(int op, const struct path *path);
++	int (*inotify_addwatch)(const struct path *path);
++	int (*syslog_vserver)(int type);
++	int (*firmware_write)(void);
++#endif
++#endif
+ };
+ 
+ struct security_hook_heads {
+@@ -1866,6 +1904,44 @@ struct security_hook_heads {
+ 	struct list_head audit_rule_match;
+ 	struct list_head audit_rule_free;
+ #endif /* CONFIG_AUDIT */
++#ifdef CONFIG_CLIP_LSM_SUPPORT /* CLIP LSM Hooks */
++#ifdef CONFIG_VERIEXEC /* CLIP-specific */
++	struct list_head fhandle_to_path;
++	struct list_head file_map_exec;
++	struct list_head file_interpreter;
++#endif /* CONFIG_VERIEXEC */
++	struct list_head file_fsignum;
++	struct list_head file_swapon;
++	struct list_head mem_access;
++	struct list_head drm_access;
++#ifdef CONFIG_CLSM_MOUNT
++	struct list_head inode_blkdev_open;
++#endif
++	struct list_head inode_memdev_open;
++#ifdef CONFIG_VERIEXEC
++	struct list_head inode_write_access;
++	struct list_head inode_privileged_binary;
++#endif
++#ifdef CONFIG_VSERVER
++	struct list_head task_ctx_migrate;
++	struct list_head task_ctx_migrated;
++	struct list_head task_kill_vserver;
++	struct list_head task_chroot;
++	struct list_head task_chrooted;
++	struct list_head task_unshare_ns;
++	struct list_head task_badness;
++	struct list_head task_oomadj;
++	struct list_head task_proc_pid;
++	struct list_head task_procfd;
++	struct list_head xfrm_policy_add;
++	struct list_head xfrm_state_add;
++	struct list_head sb_check_sb;
++	struct list_head sb_mount_permission;
++	struct list_head inotify_addwatch;
++	struct list_head syslog_vserver;
++	struct list_head firmware_write;
++#endif
++#endif /* CONFIG_CLIP_LSM_SUPPORT */
+ } __randomize_layout;
+ 
+ /*
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index 9844d8a6acf5e..fc11a66fddcf0 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -32,6 +32,12 @@ struct mnt_namespace;
+ #define MNT_SHRINKABLE	0x100
+ #define MNT_WRITE_HOLD	0x200
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#define MNT_NOSYMFOLLOW	0x400
++#define MNT_NOLOCK	0x800
++#define MNT_TRACE	0x4000
++#endif
++
+ #define MNT_SHARED	0x1000	/* if the vfsmount is a shared mount */
+ #define MNT_UNBINDABLE	0x2000	/* if the vfsmount is a unbindable mount */
+ /*
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index d53a231004015..6d5013d112115 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -62,6 +62,7 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
+ #define PTRACE_MODE_NOAUDIT	0x04
+ #define PTRACE_MODE_FSCREDS 0x08
+ #define PTRACE_MODE_REALCREDS 0x10
++#define PTRACE_MODE_PROCFD	0x20 /* vserver */
+ 
+ /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
+ #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 365bf43bc9fc0..3d51e5cb449d9 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -57,6 +57,10 @@ struct xattr;
+ struct xfrm_sec_ctx;
+ struct mm_struct;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security_clsm.h>
++#endif
++
+ /* If capable should audit the security request */
+ #define SECURITY_CAP_NOAUDIT 0
+ #define SECURITY_CAP_AUDIT 1
+@@ -1686,5 +1690,9 @@ static inline void free_secdata(void *secdata)
+ { }
+ #endif /* CONFIG_SECURITY */
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security_clsm_hooks.h>
++#endif
++
+ #endif /* ! __LINUX_SECURITY_H */
+ 
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 807838b419cc6..f3840471689a6 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -65,6 +65,10 @@ extern int proc_doulongvec_ms_jiffies_minmax(struct ctl_table *table, int,
+ 				      void __user *, size_t *, loff_t *);
+ extern int proc_do_large_bitmap(struct ctl_table *, int,
+ 				void __user *, size_t *, loff_t *);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++extern int proc_dointvec_bset(struct ctl_table *table, int write,
++		void __user *buffer, size_t *lenp, loff_t *ppos);
++#endif
+ 
+ /*
+  * Register a set of sysctl names by calling register_sysctl_table
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index c146ebc69c539..638c38286c0d2 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -46,6 +46,9 @@ struct iov_iter {
+ 	};
+ };
+ 
++typedef size_t (*iter_actor_t)(struct page *, unsigned int, unsigned int,
++				struct iov_iter *);
++
+ /*
+  * Total number of bytes covered by an iovec.
+  *
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index e460ed98fe0f3..7eefa52da3e73 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -112,6 +112,11 @@ struct inodes_stat_t {
+ #define MS_REMOUNT	32	/* Alter flags of a mounted FS */
+ #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
+ #define MS_DIRSYNC	128	/* Directory modifications are synchronous */
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks on mount */
++#define MS_NOLOCK	512	/* Do not allow file lock creation */
++#define MS_TRACE	(1<<26)	/* Trace file creation */
++#endif
+ #define MS_NOATIME	1024	/* Do not update access times. */
+ #define MS_NODIRATIME	2048	/* Do not update directory access times */
+ #define MS_BIND		4096
+diff --git a/kernel/capability.c b/kernel/capability.c
+index 5f2b4cea34f3d..72dbe33cfda85 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -268,9 +268,16 @@ SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
+ 	permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
+ 	inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+-	if (!new)
++	if (!new) {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		up_read(&security_sem);
++#endif
+ 		return -ENOMEM;
++	}
+ 
+ 	ret = security_capset(new, current_cred(),
+ 			      &effective, &inheritable, &permitted);
+@@ -279,10 +286,17 @@ SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
+ 
+ 	audit_log_capset(new, current_cred());
+ 
+-	return commit_creds(new);
++	ret = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return ret;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return ret;
+ }
+ 
+@@ -309,6 +323,7 @@ bool has_ns_capability(struct task_struct *t,
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(has_ns_capability);
+ 
+ /**
+  * has_capability - Does a task have a capability in init_user_ns
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 4c5b633b5c9be..521f34404a5d5 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -182,6 +182,7 @@ const struct cred *get_task_cred(struct task_struct *task)
+ 	rcu_read_unlock();
+ 	return cred;
+ }
++EXPORT_SYMBOL(get_task_cred);
+ 
+ /*
+  * Allocate blank credentials, such that the credentials can be filled in at a
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 9001d7e39ba0f..947e7ff95f9ad 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1645,6 +1645,10 @@ static __latent_entropy struct task_struct *copy_process(
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
++
+ 	retval = security_task_create(clone_flags);
+ 	if (retval)
+ 		goto fork_out;
+@@ -2000,6 +2004,9 @@ static __latent_entropy struct task_struct *copy_process(
+ 	trace_task_newtask(p, clone_flags);
+ 	uprobe_copy_process(p, clone_flags);
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return p;
+ 
+ bad_fork_cancel_cgroup:
+@@ -2051,6 +2058,9 @@ static __latent_entropy struct task_struct *copy_process(
+ fork_out:
+ 	gr_log_forkfail(retval);
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return ERR_PTR(retval);
+ }
+ 
+diff --git a/kernel/groups.c b/kernel/groups.c
+index 2fcadd66a8fd7..fe2971ac13db2 100644
+--- a/kernel/groups.c
++++ b/kernel/groups.c
+@@ -151,13 +151,25 @@ EXPORT_SYMBOL(set_groups);
+ int set_current_groups(struct group_info *group_info)
+ {
+ 	struct cred *new;
+-
++	int ret;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+-	if (!new)
++	if (!new) {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		up_read(&security_sem);
++#endif
+ 		return -ENOMEM;
++	}
+ 
+ 	set_groups(new, group_info);
+-	return commit_creds(new);
++	ret = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++
++	return ret;
+ }
+ 
+ EXPORT_SYMBOL(set_current_groups);
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 1aee4134ce498..3208a17c8ed22 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -28,6 +28,9 @@
+ #include <linux/file.h>
+ #include <linux/syscalls.h>
+ #include <linux/cgroup.h>
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
+ #include "../fs/mount.h"
+ 
+ static struct kmem_cache *nsproxy_cachep;
+@@ -194,7 +197,11 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
+ 		return 0;
+ 	}
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_task_unshare_ns(flags))
++#else
+ 	if (!vx_ns_can_unshare(user_ns, CAP_SYS_ADMIN, flags))
++#endif
+ 		return -EPERM;
+ 
+ 	/*
+@@ -255,7 +262,11 @@ int unshare_nsproxy_namespaces(unsigned long unshare_flags,
+ 		return 0;
+ 
+ 	user_ns = new_cred ? new_cred->user_ns : current_user_ns();
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_task_unshare_ns(unshare_flags))
++#else
+ 	if (!vx_ns_can_unshare(user_ns, CAP_SYS_ADMIN, unshare_flags))
++#endif
+ 		return -EPERM;
+ 
+ 	*new_nsp = create_new_namespaces(unshare_flags, current, user_ns,
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index b48a554a291be..52ee9799d9f47 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1452,7 +1452,11 @@ int do_syslog(int type, char __user *buf, int len, int source)
+ 			goto out;
+ 		}
+ 	}
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (!vx_check(0, VS_ADMIN|VS_WATCH) && security_syslog_vserver(type))
++#else
+ 	if (!vx_check(0, VS_ADMIN|VS_WATCH))
++#endif
+ 		return vx_do_syslog(type, buf, len);
+ 
+ 	switch (type) {
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index ee46e5a07d149..239bb22e219e1 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -301,6 +301,13 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+ 	kuid_t caller_uid;
+ 	kgid_t caller_gid;
+ 	int dumpable = 0;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	int proc_p = 0, log = 1;
++	if (mode & PTRACE_MODE_PROCFD)
++		proc_p = 1;
++	if (mode & PTRACE_MODE_NOAUDIT)
++		log = 0;
++#endif
+ 
+ 	if (!(mode & PTRACE_MODE_FSCREDS) == !(mode & PTRACE_MODE_REALCREDS)) {
+ 		WARN(1, "denying ptrace access check without PTRACE_MODE_*CREDS\n");
+@@ -345,6 +352,10 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+ 		goto ok;
+ 	if (ptrace_has_cap(tcred, mode))
+ 		goto ok;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (proc_p && security_task_procfd(task, log))
++		goto ok;
++#endif
+ 	rcu_read_unlock();
+ 	return -EPERM;
+ ok:
+@@ -356,8 +367,15 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+ 	rcu_read_lock();
+ 	if (dumpable != SUID_DUMP_USER &&
+ 	    !ptrace_has_cap(__task_cred(task), mode)) {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		if (!(proc_p && security_task_procfd(task, log))) {
++			rcu_read_unlock();
++			return -EPERM;
++		}
++#else
+ 		rcu_read_unlock();
+ 		return -EPERM;
++#endif
+ 	}
+ 	rcu_read_unlock();
+ 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 5b3ce00c18c07..78fe82d6f4538 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -766,6 +766,8 @@ static int check_kill_permission(int sig, struct siginfo *info,
+ 		}
+ 	}
+ 
++// FIXME: We might be re-introducing the 'PID exists' leak here
++#ifndef CONFIG_CLIP_LSM_SUPPORT
+ 	error = -ESRCH;
+ 	/* FIXME: we shouldn't return ESRCH ever, to avoid
+ 		  loops, maybe ENOENT or EACCES? */
+@@ -775,6 +777,7 @@ static int check_kill_permission(int sig, struct siginfo *info,
+ 			sig, info, t, vx_task_xid(t), t->pid, current->xid);
+ 		return error;
+ 	}
++#endif
+ 
+ 	/* allow glibc communication via tgkill to other threads in our
+ 	   thread group */
+@@ -1214,7 +1217,12 @@ _kill_all(int sig, struct siginfo *info)
+ 			if (vx_check(vx_task_xid(p), VS_ADMIN_P|VS_IDENT) &&
+ 					task_pid_vnr(p) > 1 &&
+ 					!same_thread_group(p, current) &&
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++					(!vx_current_initpid(p->pid)
++					|| security_task_ctx_migrated())){
++#else
+ 					!vx_current_initpid(p->pid)) {
++#endif
+ 				int err = group_send_sig_info(sig, info, p);
+ 				++count;
+ 				if (err != -EPERM)
+@@ -1389,7 +1397,12 @@ int kill_pid_info(int sig, struct siginfo *info, struct pid *pid)
+ 		rcu_read_lock();
+ 		p = pid_task(pid, PIDTYPE_PID);
+ 		if (p) {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++			 if (vx_check(vx_task_xid(p), VS_ADMIN | VS_IDENT)
++			     || !security_task_kill_vserver(current, p , sig))
++#else
+ 			if (vx_check(vx_task_xid(p), VS_IDENT))
++#endif
+ 				error = group_send_sig_info(sig, info, p);
+ 			else {
+ 				rcu_read_unlock();
+@@ -1440,7 +1453,11 @@ int kill_pid_info_as_cred(int sig, struct siginfo *info, struct pid *pid,
+ 
+ 	rcu_read_lock();
+ 	p = pid_task(pid, PIDTYPE_PID);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (!p || !vx_check(vx_task_xid(p), VS_ADMIN | VS_IDENT)) {
++#else
+ 	if (!p || !vx_check(vx_task_xid(p), VS_IDENT)) {
++#endif
+ 		ret = -ESRCH;
+ 		goto out_unlock;
+ 	}
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 85724f1c3fab5..d591b886ffe15 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -358,9 +358,19 @@ SYSCALL_DEFINE2(setregid, gid_t, rgid, gid_t, egid)
+ 	if ((egid != (gid_t) -1) && !gid_valid(kegid))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return -ENOMEM;
++	}
++#else
+ 		return -ENOMEM;
++#endif
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+@@ -401,10 +411,17 @@ SYSCALL_DEFINE2(setregid, gid_t, rgid, gid_t, egid)
+ 		new->sgid = new->egid;
+ 	new->fsgid = new->egid;
+ 
+-	return commit_creds(new);
++	retval = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return retval;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ }
+ 
+@@ -425,9 +442,19 @@ SYSCALL_DEFINE1(setgid, gid_t, gid)
+ 	if (!gid_valid(kgid))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return -ENOMEM;
++	}
++#else
+ 		return -ENOMEM;
++#endif
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+@@ -442,10 +469,17 @@ SYSCALL_DEFINE1(setgid, gid_t, gid)
+ 	else
+ 		goto error;
+ 
+-	return commit_creds(new);
++	retval = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return retval;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ }
+ 
+@@ -509,9 +543,19 @@ SYSCALL_DEFINE2(setreuid, uid_t, ruid, uid_t, euid)
+ 	if ((euid != (uid_t) -1) && !uid_valid(keuid))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return -ENOMEM;
++	}
++#else
+ 		return -ENOMEM;
++#endif
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+@@ -557,10 +601,17 @@ SYSCALL_DEFINE2(setreuid, uid_t, ruid, uid_t, euid)
+ 	if (retval < 0)
+ 		goto error;
+ 
+-	return commit_creds(new);
++	retval = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return retval;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ }
+ 
+@@ -587,9 +638,19 @@ SYSCALL_DEFINE1(setuid, uid_t, uid)
+ 	if (!uid_valid(kuid))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return -ENOMEM;
++	}
++#else
+ 		return -ENOMEM;
++#endif
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+@@ -616,10 +677,17 @@ SYSCALL_DEFINE1(setuid, uid_t, uid)
+ 	if (retval < 0)
+ 		goto error;
+ 
+-	return commit_creds(new);
++	retval = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return retval;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ }
+ 
+@@ -649,9 +717,19 @@ SYSCALL_DEFINE3(setresuid, uid_t, ruid, uid_t, euid, uid_t, suid)
+ 	if ((suid != (uid_t) -1) && !uid_valid(ksuid))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return -ENOMEM;
++	}
++#else
+ 		return -ENOMEM;
++#endif
+ 
+ 	old = current_cred();
+ 
+@@ -689,10 +767,17 @@ SYSCALL_DEFINE3(setresuid, uid_t, ruid, uid_t, euid, uid_t, suid)
+ 	if (retval < 0)
+ 		goto error;
+ 
+-	return commit_creds(new);
++	retval = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return retval;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ }
+ 
+@@ -737,9 +822,19 @@ SYSCALL_DEFINE3(setresgid, gid_t, rgid, gid_t, egid, gid_t, sgid)
+ 	if ((sgid != (gid_t) -1) && !gid_valid(ksgid))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return -ENOMEM;
++	}
++#else
+ 		return -ENOMEM;
++#endif
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+@@ -766,10 +861,17 @@ SYSCALL_DEFINE3(setresgid, gid_t, rgid, gid_t, egid, gid_t, sgid)
+ 		new->sgid = ksgid;
+ 	new->fsgid = new->egid;
+ 
+-	return commit_creds(new);
++	retval = commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
++	return retval;
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return retval;
+ }
+ 
+@@ -814,9 +916,19 @@ SYSCALL_DEFINE1(setfsuid, uid_t, uid)
+ 	if (!uid_valid(kuid))
+ 		return old_fsuid;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return old_fsuid;
++	}
++#else
+ 		return old_fsuid;
++#endif
+ 
+ 	if (uid_eq(kuid, old->uid)  || uid_eq(kuid, old->euid)  ||
+ 	    uid_eq(kuid, old->suid) || uid_eq(kuid, old->fsuid) ||
+@@ -833,10 +945,16 @@ SYSCALL_DEFINE1(setfsuid, uid_t, uid)
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return old_fsuid;
+ 
+ change_okay:
+ 	commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return old_fsuid;
+ }
+ 
+@@ -857,9 +975,19 @@ SYSCALL_DEFINE1(setfsgid, gid_t, gid)
+ 	if (!gid_valid(kgid))
+ 		return old_fsgid;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	new = prepare_creds();
+ 	if (!new)
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	{
++		up_read(&security_sem);
++		return old_fsgid;
++	}
++#else
+ 		return old_fsgid;
++#endif
+ 
+ 	if (gid_eq(kgid, old->gid)  || gid_eq(kgid, old->egid)  ||
+ 	    gid_eq(kgid, old->sgid) || gid_eq(kgid, old->fsgid) ||
+@@ -875,10 +1003,16 @@ SYSCALL_DEFINE1(setfsgid, gid_t, gid)
+ 
+ error:
+ 	abort_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return old_fsgid;
+ 
+ change_okay:
+ 	commit_creds(new);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++#endif
+ 	return old_fsgid;
+ }
+ #endif /* CONFIG_MULTIUSER */
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 3024bdb599587..985532f942056 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2554,6 +2554,59 @@ static int proc_dostring_coredump(struct ctl_table *table, int write,
+ }
+ #endif
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++
++#define OP_SET	0
++#define OP_AND	1
++#define OP_OR	2
++
++static int do_proc_dointvec_bset_conv(bool *negp, unsigned long *lvalp,
++				      int *valp,
++				      int write, void *data)
++{
++	int op = *(int *)data;
++	if (write) {
++		int val = *negp ? -*lvalp : *lvalp;
++		switch(op) {
++		case OP_SET:	*valp = val; break;
++		case OP_AND:	*valp &= val; break;
++		case OP_OR:	*valp |= val; break;
++		}
++	} else {
++		int val = *valp;
++		if (val < 0) {
++			*negp = true;
++			*lvalp = (unsigned long)-val;
++		} else {
++			*negp = false;
++			*lvalp = (unsigned long)val;
++		}
++	}
++	return 0;
++}
++
++/*
++ *	init may raise the set.
++ */
++
++int proc_dointvec_bset(struct ctl_table *table, int write,
++		void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	int op;
++
++	if (write && !capable(CAP_SYS_MODULE)) {
++		return -EPERM;
++	}
++
++	op = is_global_init(current) ? OP_SET : OP_AND;
++	return do_proc_dointvec(table, write, buffer, lenp, ppos,
++				do_proc_dointvec_bset_conv,&op);
++}
++
++EXPORT_SYMBOL(proc_dointvec_bset);
++#endif /* CONFIG_CLIP_LSM */
++
++
+ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int write,
+ 				     void __user *buffer,
+ 				     size_t *lenp, loff_t *ppos,
+diff --git a/kernel/vserver/context.c b/kernel/vserver/context.c
+index 5fe0138bdf13d..45416434e53a4 100644
+--- a/kernel/vserver/context.c
++++ b/kernel/vserver/context.c
+@@ -583,6 +583,9 @@ int vx_migrate_task(struct task_struct *p, struct vx_info *vxi, int unshare)
+ {
+ 	struct vx_info *old_vxi;
+ 	int ret = 0;
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	struct cred *new = NULL;
++#endif
+ 
+ 	if (!p || !vxi)
+ 		BUG();
+@@ -598,10 +601,21 @@ int vx_migrate_task(struct task_struct *p, struct vx_info *vxi, int unshare)
+ 	if (vx_info_state(vxi, VXS_SHUTDOWN))
+ 		return -EFAULT;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	down_read(&security_sem);
++#endif
+ 	old_vxi = task_get_vx_info(p);
+ 	if (old_vxi == vxi)
+ 		goto out;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	new = security_task_ctx_migrate(p);
++	if (IS_ERR(new)) {
++		ret = PTR_ERR(new);
++		goto out;
++	}
++#endif
++
+ //	if (!(ret = vx_migrate_user(p, vxi))) {
+ 	{
+ 		int openfd;
+@@ -657,7 +671,20 @@ int vx_migrate_task(struct task_struct *p, struct vx_info *vxi, int unshare)
+ 			put_nsproxy(old_nsp);
+ 		}
+ 	}
++
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++	ret = commit_creds(new);
++	goto out_put;
++#endif
++
+ out:
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	up_read(&security_sem);
++	if (new)
++		abort_creds(new);
++out_put:
++#endif
+ 	put_vx_info(old_vxi);
+ 	return ret;
+ }
+diff --git a/kernel/vserver/space.c b/kernel/vserver/space.c
+index 347f360798fc5..e7ae373dcf832 100644
+--- a/kernel/vserver/space.c
++++ b/kernel/vserver/space.c
+@@ -19,6 +19,9 @@
+ #include <linux/fs_struct.h>
+ #include <linux/cred.h>
+ #include <asm/uaccess.h>
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
+ 
+ #include <linux/vs_context.h>
+ #include <linux/vserver/space.h>
+@@ -292,9 +295,15 @@ int vx_enter_space(struct vx_info *vxi, unsigned long mask, unsigned index)
+ 			current->real_cred, current->cred);
+ 
+ 		if (space->vx_cred) {
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++			down_read(&security_sem);
++#endif
+ 			cred = __prepare_creds(space->vx_cred);
+ 			if (cred)
+ 				commit_creds(cred);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++			up_read(&security_sem);
++#endif
+ 		}
+ 	}
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index b6f95cc39b7be..fc6ac3496de64 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1675,8 +1675,19 @@ static void shrink_readahead_size_eio(struct file *filp,
+  * This is really ugly. But the goto's actually try to clarify some
+  * of the logic when it comes to error handling etc.
+  */
+-static ssize_t do_generic_file_read(struct file *filp, loff_t *ppos,
++
++/**
++ * CLIP: we need a function that allows us to customize the file read
++ * actor function.
++ */
++#ifndef CONFIG_CLIP_LSM_SUPPORT
++static
++ssize_t do_generic_file_read(struct file *filp, loff_t *ppos,
+ 		struct iov_iter *iter, ssize_t written)
++#else
++ssize_t do_actor_file_read(struct file *filp, loff_t *ppos,
++		struct iov_iter *iter, ssize_t written, iter_actor_t actor)
++#endif
+ {
+ 	struct address_space *mapping = filp->f_mapping;
+ 	struct inode *inode = mapping->host;
+@@ -1799,9 +1810,15 @@ static ssize_t do_generic_file_read(struct file *filp, loff_t *ppos,
+ 		/*
+ 		 * Ok, we have the page, and it's up-to-date, so
+ 		 * now we can copy it to user space...
++		 * The default actor (copy_page_to_iter) will copy the page to
++		 * userspace. A custom actor is used for veriexec.
+ 		 */
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		ret = actor(page, offset, nr, iter);
++#else
+ 		ret = copy_page_to_iter(page, offset, nr, iter);
++#endif
+ 		offset += ret;
+ 		index += offset >> PAGE_SHIFT;
+ 		offset &= ~PAGE_MASK;
+@@ -1917,6 +1934,17 @@ static ssize_t do_generic_file_read(struct file *filp, loff_t *ppos,
+ 	return written ? written : error;
+ }
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++EXPORT_SYMBOL(do_actor_file_read);
++
++static ssize_t do_generic_file_read(struct file *filp, loff_t *ppos,
++		struct iov_iter *iter, ssize_t written)
++{
++	return do_actor_file_read(filp, ppos, iter, written, copy_page_to_iter);
++}
++#endif
++
++
+ /**
+  * generic_file_read_iter - generic filesystem read routine
+  * @iocb:	kernel I/O control block
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d06054d9a0a75..e2b85cbe2968e 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1823,6 +1823,13 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		 * new file must not have been exposed to user-space, yet.
+ 		 */
+ 		vma->vm_file = get_file(file);
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++		if (vm_flags & VM_EXEC) {
++			error = security_file_map_exec(vma);
++			if (error)
++				goto free_vma;
++		}
++#endif
+ 		error = file->f_op->mmap(file, vma);
+ 		if (error)
+ 			goto unmap_and_free_vma;
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 480fcf04ae8a6..1d09bf13185bc 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -428,6 +428,17 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ 	}
+ 
+ success:
++
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (vma->vm_file && (newflags & VM_EXEC)) {
++		error = security_file_map_exec(vma);
++		/* map_exec() may add DENYWRITE to the mapping */
++		if (!(oldflags & VM_DENYWRITE) &&
++				(vma->vm_flags & VM_DENYWRITE))
++			newflags |= VM_DENYWRITE;
++	}
++#endif
++
+ 	/*
+ 	 * vm_flags and vm_page_prot are protected by the mmap_sem
+ 	 * held in write mode.
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 766216fd7911a..475eec511eb62 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -44,6 +44,10 @@
+ #include <asm/tlb.h>
+ #include "internal.h"
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#include <linux/security.h>
++#endif
++
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/oom.h>
+ 
+@@ -221,6 +225,10 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	adj *= totalpages / 1000;
+ 	points += adj;
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	points /= security_task_badness(p);
++#endif
++
+ 	/*
+ 	 * Never return 0 for an eligible task regardless of the root bonus and
+ 	 * oom_score_adj (oom_score_adj can't be OOM_SCORE_ADJ_MIN here).
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 2427030c3e3fc..226cfa1f492ab 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2439,6 +2439,11 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		goto bad_swap;
+ 	}
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	error = security_file_swapon(swap_file, name->name);
++	if (error)
++		goto bad_swap;
++#endif
+ 	p->swap_file = swap_file;
+ 	mapping = swap_file->f_mapping;
+ 	inode = mapping->host;
+diff --git a/mm/util.c b/mm/util.c
+index 344fbfb87d9db..bb6aa643be7df 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -600,6 +600,9 @@ int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
+ 
+ 	return -ENOMEM;
+ }
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++EXPORT_SYMBOL(__vm_enough_memory);
++#endif
+ 
+ /**
+  * get_cmdline() - copy the cmdline value to a buffer.
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 377d1ca2c09ce..c5d079c94c5bb 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -776,6 +776,13 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
+ 	struct hlist_head *chain;
+ 	struct hlist_node *newpos;
+ 
++#ifdef CONFIG_SECURITY_NETWORK_XFRM
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	if (security_xfrm_policy_add(dir, policy))
++		return -EPERM;
++#endif
++#endif
++
+ 	spin_lock_bh(&net->xfrm.xfrm_policy_lock);
+ 	chain = policy_hash_bysel(net, &policy->selector, policy->family, dir);
+ 	delpol = NULL;
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 186ceef320d7d..5d66c41e6c39b 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -1135,6 +1135,14 @@ int xfrm_state_add(struct xfrm_state *x)
+ 
+ 	to_put = NULL;
+ 
++#ifdef CONFIG_SECURITY_NETWORK_XFRM
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++	err = security_xfrm_state_add(x);
++	if (err)
++		return err;
++#endif
++#endif
++
+ 	spin_lock_bh(&net->xfrm.xfrm_state_lock);
+ 
+ 	x1 = __xfrm_state_locate(x, use_spi, family);
+diff --git a/security/Kconfig b/security/Kconfig
+index 7ba69dd9382dd..166f52a5a2b54 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -1076,6 +1076,8 @@ endmenu
+ 
+ endmenu
+ 
++source security/clsm/Kconfig
++
+ source security/keys/Kconfig
+ 
+ config SECURITY_DMESG_RESTRICT
+diff --git a/security/Makefile b/security/Makefile
+index f2d71cdb8e19b..5da62313eab1a 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -29,3 +29,6 @@ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
++
++# Object CLIP LSM
++obj-$(CONFIG_CLIP_LSM)                 += clsm/
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 7ba4985269a4a..61b23b9888864 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -461,7 +461,7 @@ int is_privileged_binary(const struct dentry *dentry)
+ 			return 3;
+ 	}
+ 
+-	return 0;
++	return security_inode_privileged_binary(dentry);
+ }
+ 
+ /*
+diff --git a/security/min_addr.c b/security/min_addr.c
+index 6457a0cfa0b07..c52b915f41d32 100644
+--- a/security/min_addr.c
++++ b/security/min_addr.c
+@@ -7,6 +7,7 @@
+ unsigned long mmap_min_addr;
+ /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
+ unsigned long dac_mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
++EXPORT_SYMBOL(dac_mmap_min_addr);
+ /* amount of vm to protect from userspace using the LSM = CONFIG_LSM_MMAP_MIN_ADDR */
+ 
+ /*
+diff --git a/security/security.c b/security/security.c
+index f825304f04a77..56c1122eaff67 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -129,6 +129,36 @@ int __init security_module_enable(const char *module)
+ 	RC;							\
+ })
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++#define call_ulong_hook(FUNC, IRC, ...) ({			\
++	unsigned long RC = IRC;					\
++	do {							\
++		struct security_hook_list *P;			\
++								\
++		list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
++			RC = P->hook.FUNC(__VA_ARGS__);		\
++			if (RC != 0)				\
++				break;				\
++		}						\
++	} while (0);						\
++	RC;							\
++})
++
++#define call_struct_cred_hook(FUNC, IRC, ...) ({			\
++	struct cred *RC = IRC;						\
++	do {							\
++		struct security_hook_list *P;			\
++								\
++		list_for_each_entry(P, &security_hook_heads.FUNC, list) { \
++			RC = P->hook.FUNC(__VA_ARGS__);		\
++			if (RC != 0)				\
++				break;				\
++		}						\
++	} while (0);						\
++	RC;							\
++})
++#endif /* CONFIG_CLIP_LSM_SUPPORT */
++
+ /* Security operations */
+ 
+ int security_binder_set_context_mgr(struct task_struct *mgr)
+@@ -1589,6 +1619,249 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule,
+ }
+ #endif /* CONFIG_AUDIT */
+ 
++#ifdef CONFIG_CLIP_LSM_SUPPORT
++/**
++ *  @file security_clsm.c
++ *  CLIP Linux Security Module complementary security hooks
++ *  implementation.
++ *  @author Vincent Strubel <clipos@ssi.gouv.fr>
++ *
++ *  Copyright (C) 2009 SGDN/DCSSI
++ *  Copyright (C) 2011 SGDSN/ANSSI
++ *  @n
++ *  All rights reserved.
++ *
++ */
++
++/**
++ * Mutex blocking task cred modifications while CLIP LSM
++ * is being loaded and task tags are being allocated.
++ */
++DECLARE_RWSEM(security_sem);
++EXPORT_SYMBOL(security_sem);
++
++/*
++ * Security hooks for filesystem operations.
++ */
++
++#ifdef CONFIG_VSERVER
++uint32_t
++security_mountop2vxc(int op)
++{
++	switch (op) {
++		case SECURITY_MOUNT_BINARY:
++			return VXC_BINARY_MOUNT;
++		default:
++			return 0;
++	}
++}
++EXPORT_SYMBOL(security_mountop2vxc);
++#endif
++
++int
++security_sb_mount_permission(int op, const struct path *path)
++{
++	return call_int_hook(sb_mount_permission, 0, op, path);
++}
++
++int
++security_sb_check_sb(struct vfsmount *mnt, struct dentry *dentry)
++{
++	return call_int_hook(sb_check_sb, 0, mnt, dentry);
++}
++
++/*
++ * Inode hooks.
++ */
++int
++security_inode_blkdev_open(struct inode *inode, int mask)
++{
++	return call_int_hook(inode_blkdev_open, 0, inode, mask);
++}
++
++int
++security_inode_memdev_open(struct inode *inode, struct file *filp)
++{
++	return call_int_hook(inode_memdev_open, 0, inode, filp);
++}
++
++int
++security_inode_write_access(struct inode *inode)
++{
++	return call_int_hook(inode_write_access, 0, inode);
++}
++
++int
++security_inode_privileged_binary(const struct dentry *dentry)
++{
++	return call_int_hook(inode_privileged_binary, 0, dentry);
++}
++
++
++/*
++ * File hooks.
++ */
++
++int
++security_inotify_addwatch(const struct path *path)
++{
++	return call_int_hook(inotify_addwatch, 0, path);
++}
++
++int
++security_fhandle_to_path(int dirfd, struct file_handle *handle)
++{
++	return call_int_hook(fhandle_to_path, 0, dirfd, handle);
++}
++
++int
++security_file_map_exec(struct vm_area_struct *vma)
++{
++	return call_int_hook(file_map_exec, 0, vma);
++}
++
++int
++security_file_interpreter(struct linux_binprm *bprm, struct file *file)
++{
++	return call_int_hook(file_interpreter, 0, bprm, file);
++}
++
++int
++security_file_fsignum(struct file *file, int sig)
++{
++	return call_int_hook(file_fsignum, 0, file, sig);
++}
++
++int
++security_file_swapon(struct file *file, const char *name)
++{
++	return call_int_hook(file_swapon, 0, file, name);
++}
++
++int
++security_mem_access(struct file *file, int op)
++{
++	return call_int_hook(mem_access, 0, file, op);
++}
++
++int
++security_drm_access(int flags)
++{
++	return call_int_hook(drm_access, 0, flags);
++}
++EXPORT_SYMBOL(security_drm_access);
++
++/*
++ * Task hooks.
++ */
++
++#ifdef CONFIG_VSERVER
++
++struct cred *
++security_task_ctx_migrate(struct task_struct *tsk)
++{
++	return call_struct_cred_hook(task_ctx_migrate, 0, tsk);
++}
++
++int
++security_task_ctx_migrated(void)
++{
++	return call_int_hook(task_ctx_migrated, 0, );
++}
++
++int
++security_task_kill_vserver(struct task_struct *p,
++					struct task_struct *c, int sig)
++{
++	return call_int_hook(task_kill_vserver, 0, p, c, sig);
++}
++
++#endif /* CONFIG_VSERVER */
++
++int
++security_task_chroot(void)
++{
++	return call_int_hook(task_chroot, 0, );
++}
++
++int
++security_task_chrooted(const struct task_struct *tsk)
++{
++	return call_int_hook(task_chrooted, 0, tsk);
++}
++
++int
++security_task_unshare_ns(unsigned long flags)
++{
++	return call_int_hook(task_unshare_ns, 0, flags);
++}
++
++unsigned long
++security_task_badness(const struct task_struct *tsk)
++{
++	return call_ulong_hook(task_badness, 0, tsk);
++}
++
++int
++security_task_oomadj(const struct task_struct *tsk, int oomadj)
++{
++	return call_int_hook(task_oomadj, 0, tsk, oomadj);
++}
++
++void
++security_task_proc_pid(struct seq_file *m, struct task_struct *tsk)
++{
++	call_void_hook(task_proc_pid, m, tsk);
++}
++
++int
++security_task_procfd(struct task_struct *c, int log)
++{
++	return call_int_hook(task_procfd, 0, c, log);
++}
++
++
++/*
++ * XFRM hooks.
++ */
++#ifdef CONFIG_SECURITY_NETWORK_XFRM
++
++int
++security_xfrm_policy_add(int dir, struct xfrm_policy *policy)
++{
++	return call_int_hook(xfrm_policy_add, 0, dir, policy);
++}
++
++int
++security_xfrm_state_add(struct xfrm_state *state)
++{
++	return call_int_hook(xfrm_state_add, 0, state);
++}
++
++
++#endif	/* CONFIG_SECURITY_NETWORK_XFRM */
++
++
++/*
++ * Misc hooks.
++ */
++#ifdef CONFIG_VSERVER
++int
++security_syslog_vserver(int type)
++{
++	return call_int_hook(syslog_vserver, 0, type);
++}
++#endif
++
++int
++security_firmware_write(void)
++{
++	return call_int_hook(firmware_write, 0, );
++}
++/* Needed by modules */
++EXPORT_SYMBOL(security_firmware_write);
++#endif /* CONFIG_CLIP_LSM_SUPPORT */
++
+ struct security_hook_heads security_hook_heads = {
+ 	.binder_set_context_mgr =
+ 		LIST_HEAD_INIT(security_hook_heads.binder_set_context_mgr),
+@@ -1940,4 +2213,70 @@ struct security_hook_heads security_hook_heads = {
+ 	.audit_rule_free =
+ 		LIST_HEAD_INIT(security_hook_heads.audit_rule_free),
+ #endif /* CONFIG_AUDIT */
++#ifdef CONFIG_CLIP_LSM_SUPPORT /* CLIP LSM Hooks */
++#ifdef CONFIG_VERIEXEC /* CLIP-specific */
++	.fhandle_to_path =
++		LIST_HEAD_INIT(security_hook_heads.fhandle_to_path),
++	.file_map_exec =
++		LIST_HEAD_INIT(security_hook_heads.file_map_exec),
++	.file_interpreter =
++		LIST_HEAD_INIT(security_hook_heads.file_interpreter),
++#endif /* CONFIG_VERIEXEC */
++	.file_fsignum =
++		LIST_HEAD_INIT(security_hook_heads.file_fsignum),
++	.file_swapon =
++		LIST_HEAD_INIT(security_hook_heads.file_swapon),
++	.mem_access =
++		LIST_HEAD_INIT(security_hook_heads.mem_access),
++	.drm_access =
++		LIST_HEAD_INIT(security_hook_heads.drm_access),
++#ifdef CONFIG_CLSM_MOUNT
++	.inode_blkdev_open =
++		LIST_HEAD_INIT(security_hook_heads.inode_blkdev_open),
++#endif
++	.inode_memdev_open =
++		LIST_HEAD_INIT(security_hook_heads.inode_memdev_open),
++#ifdef CONFIG_VERIEXEC
++	.inode_write_access =
++		LIST_HEAD_INIT(security_hook_heads.inode_write_access),
++	.inode_privileged_binary =
++		LIST_HEAD_INIT(security_hook_heads.inode_privileged_binary),
++#endif
++#ifdef CONFIG_VSERVER
++	.task_ctx_migrate =
++		LIST_HEAD_INIT(security_hook_heads.task_ctx_migrate),
++	.task_ctx_migrated =
++		LIST_HEAD_INIT(security_hook_heads.task_ctx_migrated),
++	.task_kill_vserver =
++		LIST_HEAD_INIT(security_hook_heads.task_kill_vserver),
++	.task_chroot =
++		LIST_HEAD_INIT(security_hook_heads.task_chroot),
++	.task_chrooted =
++		LIST_HEAD_INIT(security_hook_heads.task_chrooted),
++	.task_unshare_ns =
++		LIST_HEAD_INIT(security_hook_heads.task_unshare_ns),
++	.task_badness =
++		LIST_HEAD_INIT(security_hook_heads.task_badness),
++	.task_oomadj =
++		LIST_HEAD_INIT(security_hook_heads.task_oomadj),
++	.task_proc_pid =
++		LIST_HEAD_INIT(security_hook_heads.task_proc_pid),
++	.task_procfd =
++		LIST_HEAD_INIT(security_hook_heads.task_procfd),
++	.xfrm_policy_add =
++		LIST_HEAD_INIT(security_hook_heads.xfrm_policy_add),
++	.xfrm_state_add =
++		LIST_HEAD_INIT(security_hook_heads.xfrm_state_add),
++	.sb_check_sb =
++		LIST_HEAD_INIT(security_hook_heads.sb_check_sb),
++	.sb_mount_permission =
++		LIST_HEAD_INIT(security_hook_heads.sb_mount_permission),
++	.inotify_addwatch =
++		LIST_HEAD_INIT(security_hook_heads.inotify_addwatch),
++	.syslog_vserver =
++		LIST_HEAD_INIT(security_hook_heads.syslog_vserver),
++	.firmware_write =
++		LIST_HEAD_INIT(security_hook_heads.firmware_write),
++#endif
++#endif /* CONFIG_CLIP_LSM_SUPPORT */
+ };
+-- 
+2.17.0
+

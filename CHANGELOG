@@ -1,0 +1,3647 @@
+# ChangeLog for sys-kernel/clip-kernel
+
+*clip-kernel-4.9.74-r1 (10 Jul 2018)
+
+  10 Jul 2018; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-4.9.74-r1.ebuild, -clip-kernel-4.9.74.ebuild:
+  Patches cleanup.
+
+*clip-kernel-4.4.135 (06 Jun 2018)
+
+  06 Jun 2018; Thibaut Sautereau <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.135.ebuild, -clip-kernel-4.4.127-r2.ebuild:
+  Update to 4.4.135.
+
+*clip-kernel-4.4.127-r2 (09 May 2018)
+
+  09 May 2018; Thibaut Sautereau <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.127-r2.ebuild, -clip-kernel-4.4.127-r1.ebuild:
+  Fix broken O_MAYEXEC support due to upstream change.
+
+*clip-kernel-4.4.127-r1 (09 May 2018)
+
+  09 May 2018; Thibaut Sautereau <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.127-r1.ebuild, -clip-kernel-4.4.127.ebuild:
+  Unset CONFIG_CLSM_CHROOT_PTRACE when debugging so we can use strace.
+
+*clip-kernel-4.4.127 (17 Apr 2018)
+
+  17 Apr 2018; Thibaut Sautereau <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.127.ebuild, -clip-kernel-4.4.113-r1.ebuild:
+  Update to 4.4.127.
+
+*clip-kernel-4.4.113-r1 (07 Feb 2018)
+
+  07 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.113-r1.ebuild, -clip-kernel-4.4.113.ebuild:
+  Update 4.4 kernel config.
+
+*clip-kernel-4.9.74 (07 Feb 2018)
+
+  07 Feb 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.9.74.ebuild, -clip-kernel-4.9.58.ebuild:
+  Update to 4.9.74. Update kernel config.
+
+*clip-kernel-4.4.113 (29 Jan 2018)
+
+  29 Jan 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.113.ebuild, -clip-kernel-4.4.109.ebuild:
+  Update to 4.4.113. Update kernel config.
+
+*clip-kernel-4.4.109 (24 Jan 2018)
+
+  24 Jan 2018; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.109.ebuild, -clip-kernel-4.4.49-r4.ebuild:
+  Update to 4.4.109. Update kernel config.
+
+*clip-kernel-4.4.49-r3.ebuild (23 Nov 2017)
+
+  23 Nov 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  files/initrd-clip,
+  +clip-kernel-4.4.49-r4.ebuild, -clip-kernel-4.4.49-r3.ebuild:
+  Fix for the init script, where the user would input a wrong
+  password at first, when setting or changing its current encryption
+  password. The bug would cause the input to be prefixed by the
+  previous password attempts, and would encrypt the system with a
+  password the user could not know.
+
+*clip-kernel-3.14.79-r11 (25 Aug 2017)
+
+  25 Aug 2017; Nicolas Godinho <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r11.ebuild, -clip-kernel-3.14.79-r10.ebuild:
+  Increase CONFIG_BLK_DEV_RAM_SIZE (i.e. maximum size for ramdisks) to 128 MiB
+  in order for the CLIP installer LiveCD kernel to be able to properly create
+  the initrd ramdisk. The reason behind this is the initrd image which can be
+  quite big since it contains a lot of (more-or-less useful) modules.
+
+*clip-kernel-4.4.49-r3 clip-kernel-3.14.79-r10 (03 Jul 2017)
+
+  03 Jul 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  files/initrd-clip,
+  +clip-kernel-4.4.49-r3.ebuild, -clip-kernel-4.4.49-r2.ebuild:
+  Fix some issue with full disk encryption migration.
+
+
+  17 May 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +config-4.4.livecd, +nfs_livecd.patch, clip-kernel-4.4.49-r2.ebuild:
+  Add livecd configuration and a small patch for nfs support.
+
+  16 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  files/config-3.14.livecd:
+  Provide new configuration for the kernel (latest update added
+  GCC_PLUGINS and DEBUG_RODATA)
+
+*clip-kernel-4.4.49-r2 (10 May 2017)
+
+  10 May 2017; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.49-r2.ebuild, -clip-kernel-4.4.49-r1.ebuild,
+  config-4.4.modular-smp:
+  Enable MAC_80211_RC_MINSTREL. This is required for the ath9k driver (Wifi) to
+  work correctly. ath9k is the default driver for the Wifi card of the Toshiba
+  R830.
+
+*clip-kernel-3.14.79-r9 (20 Apr 2017)
+
+  20 Apr 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r9.ebuild, -clip-kernel-3.14.79-r8.ebuild:
+  RBump to fix randomize_va_space value.
+
+*clip-kernel-4.4.49-r1 (19 Apr 2017)
+
+  19 Apr 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.49-r1.ebuild, -clip-kernel-4.4.49.ebuild:
+  RBump to fix randomize_va_space value + minor fix in patches.
+
+*clip-kernel-3.14.79-r8 (24 Feb 2017)
+
+  24 Feb 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r8.ebuild, -clip-kernel-3.14.79-r7.ebuild:
+  Update to grsecurity-3.1-3.14.79-201702022041.
+
+*clip-kernel-4.4.49 (20 Feb 2017)
+
+  20 Feb 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.49.ebuild, -clip-kernel-4.4.45-r1.ebuild:
+  Update to 4.4.49 kernel, grsecurity-3.1-4.4.49-201702152050.
+
+*clip-kernel-3.14.79-r7 (17 Feb 2017)
+
+  17 Feb 2017; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r7.ebuild, -clip-kernel-3.14.79-r6.ebuild:
+  Enable CLIP-TPM support within the CLIP kernel.
+
+*clip-kernel-3.14.79-r6 (08 Feb 2017)
+
+  08 Feb 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r6.ebuild, -clip-kernel-3.14.79-r5.ebuild:
+  Import updated PF_RING patches.
+
+*clip-kernel-3.14.79-r5 (02 Feb 2017)
+
+  02 Feb 2017; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r5.ebuild, -clip-kernel-3.14.79-r4.ebuild:
+  Fix strict TPE logging (clip-patches).
+
+*clip-kernel-4.4.13-r4 (11 Jan 2017)
+
+  11 Jan 2017; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.13-r4.ebuild, -clip-kernel-4.4.13-r3.ebuild:
+  Add a "*" to accept 4.4.x packages for firmwares
+
+*clip-kernel-3.14.79-r4 (21 Dec 2016)
+
+  21 Dec 2016; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79-r4.ebuild, -clip-kernel-3.14.79-r3.ebuild:
+  Add tpm support for clip-livecd
+
+*clip-kernel-4.4.13-r3 clip-kernel-3.14.79 (28 Nov 2016)
+
+  28 Nov 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.13-r3.ebuild, -clip-kernel-4.4.13-r2.ebuild,
+  +clip-kernel-3.14.79-r3.ebuild, -clip-kernel-3.14.79.ebuild,
+  files/mkinitrd.clip-3.13, files/mkinitrd.clip-3.13:
+  Add rm symlink to busybox in initrd -fix issue with full encryption migration.
+  Also bump clip-kernel one more time to ensure upgrade from clip-4.4.2
+
+*clip-kernel-4.4.13-r2 (23 Nov 2016)
+
+  23 Nov 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.13-r2.ebuild, -clip-kernel-4.4.13-r1.ebuild:
+  files/config-4.4.modular-smp:
+  Re-enable CONFIG_USB_NET_DRIVERS on i386.
+
+  10 Nov 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  files/config-3.14.livecd:
+  Explicit disable of hibernation.
+
+*clip-kernel-3.14.79 (20 Oct 2016)
+
+  20 Oct 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.79.ebuild, -clip-kernel-3.14.73-r3.ebuild:
+  Linux 3.14.79 & grsecurity-3.1-3.14.79-201610200106 update to fix
+  CVE-2016-5195.
+
+*clip-kernel-3.14.73-r3 (19 Oct 2016)
+
+  19 Oct 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.73-r3.ebuild, -clip-kernel-3.14.73-r2.ebuild:
+  Cgroups activation.
+
+  12 Oct 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +files/config-4.4.devstation,
+  +files/config-4.4.modular-smp.amd64:
+  Add config files for devstation and amd64 modular-smp.
+
+*clip-kernel-4.4.13-r1 clip-kernel-3.14.73-r2 (04 Oct 2016)
+
+  04 Oct 2016; Nicolas Belouin <clipos@ssi.gouv.fr>
+  files/initrd,
+  +clip-kernel-3.14.73-r2.ebuild, -clip-kernel-3.14.73-r1.ebuild,
+  +clip-kernel-4.4.13-r1.ebuild, -clip-kernel-4.4.13.ebuild:
+  Add way to change disk encryption password.
+
+*clip-kernel-4.4.13 (17 Aug 2016)
+
+  17 Aug 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-4.4.13.ebuild, files/config-4.4.modular-smp:
+  Add clip-kernel 4.4.13 with initial kernel config based on 3.14 config.
+
+*clip-kernel-3.14.73-r1 (12 Jul 2016)
+
+  12 Jul 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.73-r1.ebuild, -clip-kernel-3.14.73.ebuild:
+  Fix the vserver patch ported on top of grsecurity.
+
+*clip-kernel-3.14.73 (28 Jun 2016)
+
+  28 Jun 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.73.ebuild, -clip-kernel-3.14.68-r1.ebuild:
+  Update kernel to 3.14.73, grsecurity to 3.1-3.14.73-201606280007.
+  Backport fixes for trackpoint/touchpad support on 2015 Lenovo ThinkPads.
+
+*clip-kernel-3.14.68-r1 (24 May 2016)
+
+  24 May 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.68-r1.ebuild, -clip-kernel-3.14.68.ebuild:
+  Backport GCC version check update from upstream to fix GCC plugin check in
+  grsecurity patch.
+
+*clip-kernel-3.14.68 (10 May 2016)
+
+  10 May 2016; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.68.ebuild, -clip-kernel-3.14.65-r1.ebuild:
+  Update kernel to 3.14.68, grsecurity to 3.1-3.14.68-201605071727.
+
+*clip-kernel-3.14.65-r1 (29 Mar 2016)
+
+  29 Mar 2016; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.65-r1.ebuild, -clip-kernel-3.14.65.ebuild:
+  Activate AES-NI within kernel (not as a module) on all compatible platforms.
+
+*clip-kernel-3.14.65 (18 Mar 2016)
+
+  18 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.65.ebuild, -clip-kernel-3.14.64-r1.ebuild:
+  Update kernel to 3.14.65, grsecurity to 3.1-3.14.65-201603171919.
+
+*clip-kernel-3.14.64-r1 (15 Mar 2016)
+
+  15 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.64-r1.ebuild, -clip-kernel-3.14.64.ebuild:
+  Update grsecurity to 3.1-3.14.64-201603142217.
+
+*clip-kernel-3.14.64 (14 Mar 2016)
+
+  14 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.64.ebuild, -clip-kernel-3.14.63.ebuild:
+  Update kernel to 3.14.64, grsecurity to 3.1-3.14.64-201603131304.
+
+*clip-kernel-3.14.63 (04 Mar 2016)
+
+  04 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.63.ebuild, -clip-kernel-3.14.62.ebuild,
+  files/config-3.14.devstation,
+  files/config-3.14.livecd,
+  files/config-3.14.livecd.amd64,
+  files/config-3.14.livecd.armada-370-eurisko,
+  files/config-3.14.livecd.armada-370-mirabox,
+  files/config-3.14.modular-smp,
+  files/config-3.14.modular-smp.amd64,
+  files/config-3.14.modular-smp.armada-370-mirabox,
+  files/config-3.14.xen:
+  Update kernel to 3.14.63, grsecurity to 3.1-3.14.63-201603032155.
+  Keep HARDEN_TTY disabled for now (to ease 4.4.2 backports)
+
+*clip-kernel-3.14.62 (01 Mar 2016)
+
+  01 Mar 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.62.ebuild, -clip-kernel-3.14.60-r1.ebuild:
+  Update kernel to 3.14.62, grsecurity to 3.1-3.14.62-201602282148.
+
+*clip-kernel-3.14.60-r1 (17 Feb 2016)
+
+  17 Feb 2016; Alain Ozanne <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.60-r1.ebuild, -clip-kernel-3.14.60.ebuild:
+  Add options for clip-livecd to enter and exit sleep state, 
+  becareful : exit sleep state only for i915 (Intel 8xx/9xx... Graphics).
+
+*clip-kernel-3.14.60 (05 Feb 2016)
+
+  05 Feb 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.60.ebuild, -clip-kernel-3.14.58-r4.ebuild:
+  Bump kernel to 3.14.60, grsecurity to 3.1-3.14.60-201601311612.
+
+*clip-kernel-3.14.58-r4 (20 Jan 2016)
+
+  20 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.58-r4.ebuild, -clip-kernel-3.14.58-r3.ebuild:
+  RBump clip-patches to 3.14.58-r3 for grsecurity 3.1-3.14.58-201601192225.
+
+*clip-kernel-3.14.58-r3 (19 Jan 2016)
+
+  19 Jan 2016; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.58-r3.ebuild, -clip-kernel-3.14.58-r2.ebuild,
+  files/config-3.14.livecd:
+  Reenable old SATA drivers for clip-livecd.
+
+*clip-kernel-3.14.58-r2 (06 Jan 2016)
+
+  06 Jan 2016; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.58-r2.ebuild, -clip-kernel-3.14.58-r1.ebuild:
+  RBump clip-patches to 3.14.58-r2 for grsecurity 3.1-3.14.58-201601051918.
+
+*clip-kernel-3.14.58-r1 (21 Dec 2015)
+
+  21 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.58-r1.ebuild, -clip-kernel-3.14.58.ebuild:
+  RBump clip-patches to 3.14.58-r1 for grsecurity 3.1-3.14.58-201512151907.
+
+*clip-kernel-3.14.58 (11 Dec 2015)
+
+  11 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.58.ebuild, -clip-kernel-3.14.57.ebuild:
+  Bump kernel to 3.14.58, grsecurity to 3.1-3.14.58-201512092319.
+
+*clip-kernel-3.14.57 (07 Dec 2015)
+
+  07 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.57.ebuild, -clip-kernel-3.14.51-r2.ebuild:
+  Bump kernel to 3.14.57, grsecurity to 3.1-3.14.57-201512051917.
+  Rebase clip-lsm to 3.14.57.
+
+  01 Dec 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +files/config-3.14.livecd.amd64:
+  Add config, based on modular-smp.amd64 and livecd.
+
+  27 Nov 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  files/config-3.14.modular-smp.amd64:
+  Update config, disable CONFIG_IOSF_MBI (unneeded).
+
+*clip-kernel-3.14.51-r2 (16 Oct 2015)
+
+  16 Oct 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.51-r2.ebuild, -clip-kernel-3.14.51-r1.ebuild:
+  Improve i915 support (add lots of patches for the Broadwell graphic stack that
+  come from more recent kernels).
+
+  12 Oct 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  clip-kernel-3.14.51-r1.ebuild:
+  Tied to the same linux-headers version, needed anyway by compilation tools.
+
+  28 Sep 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  clip-kernel-3.14.51-r1.ebuild, files/config-3.14.livecd,
+  files/config-3.14.modular-smp.amd64:
+  Enable rtwifi options also in modular-smpd.amd64 and clip-livecd config file,
+  fix build failure.
+
+*clip-kernel-3.14.51-r1 (14 Sep 2015)
+
+  14 Sep 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.51-r1.ebuild, -clip-kernel-3.14.51.ebuild,
+  files/config-3.14.modular-smp:
+  Backport rtlwifi from 3.18 kernel
+
+*clip-kernel-3.14.51 (20 Aug 2015)
+
+  20 Aug 2015; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.51.ebuild, -clip-kernel-3.14.50.ebuild:
+  Bump kernel to 3.14.51, grsec to 3.1-3.14.51-201508181951
+
+*clip-kernel-3.14.50 (14 Aug 2015)
+
+  18 Aug 2015; Timothée Ravier <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.50.ebuild, -clip-kernel-3.14.48-r1.ebuild:
+  Bump kernel to 3.14.50, grsec to 3.1-3.14.50-201508102128
+
+*clip-kernel-3.14.48-r1 (28 Jul 2015)
+
+  28 Jul 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.48-r1.ebuild, -clip-kernel-3.14.48.ebuild:
+  Fix mkinit rd: do not move clip-file if they do not exist
+
+*clip-kernel-3.14.48 (27 Jul 2015)
+
+  27 Jul 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.48.ebuild, -clip-kernel-3.14.47.ebuild,
+  files/config-3.14.devstation,
+  files/config-3.14.livecd,
+  files/config-3.14.modular-smp,
+  files/config-3.14.modular-smp.amd64,
+  files/config-3.14.xen:
+  Bump kernel to 3.14.48, grsec to 3.1-3.14.48-201507261203.
+  Disable DEFAULT_MODIFY_LDT_SYSCALL in x86 config files.
+
+*clip-kernel-3.14.47-r2 (15 Jul 2015)
+
+  15 Jul 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.47-r2.ebuild, -clip-kernel-3.14.47-r1.ebuild:
+  Reenable System.map copy for clip-livecd kernels.
+
+*clip-kernel-3.14.47-r1 (10 Jul 2015)
+
+  10 Jul 2015; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.47-r1.ebuild, -clip-kernel-3.14.47.ebuild:
+  Enable CONFIG_KALLSYMS in the clip-livecd kernel.
+
+*clip-kernel-3.14.47 (09 Jul 2015)
+
+  09 Jul 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.47.ebuild, -clip-kernel-3.14.45.ebuild:
+  Bump kernel to 3.14.47, grsec to 3.1-3.14.47-201507050832.
+
+*clip-kernel-3.14.45 (25 Jun 2015)
+
+  25 Jun 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.45.ebuild, -clip-kernel-3.14.44-r1.ebuild:
+  Bump kernel to 3.14.45, grsec to 3.1-3.14.45-201506232103.
+
+*clip-kernel-3.14.44-r1 (19 Jun 2015)
+
+  19 Jun 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.44-r1.ebuild, -clip-kernel-3.14.44.ebuild:
+  Clean-up /boot directory
+
+  17 Jun 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  clip-kernel-3.14.44.ebuild, files/config-3.14.modular-smp.amd64:
+  Update amd64 config to fit i386 one.
+
+*clip-kernel-3.14.44 (09 Jun 2015)
+
+  09 Jun 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.44.ebuild, -clip-kernel-3.14.43-r1.ebuild,
+  files/config-3.14.modular-smp:
+  Bump kernel to 3.14.44, grsec to 3.1-3.14.44-201506082249.
+  Enable MCS7830 USB/Ethernet adapter.
+
+*clip-kernel-3.14.43-r1 (28 May 2015)
+
+  28 May 2015; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.43-r1.ebuild, -clip-kernel-3.14.43.ebuild:
+  Fix VServer race-condition and info-leak.
+
+*clip-kernel-3.14.43 (26 May 2015)
+
+  26 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.43.ebuild, -clip-kernel-3.14.41.ebuild:
+  Bump kernel to 3.14.43, grsec to 3.1-3.14.43-201505222221.
+
+*clip-kernel-3.14.41 (11 May 2015)
+
+  11 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.41.ebuild, -clip-kernel-3.14.40.ebuild:
+  Bump kernel to 3.14.41, grsec to 3.1-3.14.41-201505101121.
+
+*clip-kernel-3.14.40 (05 May 2015)
+
+  05 May 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.40.ebuild, -clip-kernel-3.14.39-r3.ebuild,
+  files/config-3.14.modular-smp:
+  Bump kernel to 3.14.40, grsec to 3.1-3.14.40-201505042052.
+  Re-enable DOS partition support, lost with EFI changes.
+
+*clip-kernel-3.14.39-r3 (28 Apr 2015)
+
+  28 Apr 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.39-r3.ebuild, -clip-kernel-3.14.39-r2.ebuild:
+  Add minimalist EFI support in kernel
+
+*clip-kernel-3.14.39-r2 (28 Apr 2015)
+
+  28 Apr 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.39-r2.ebuild, -clip-kernel-3.14.39-r1.ebuild:
+  Add Surface Pro Cover 3 support
+
+*clip-kernel-3.14.39-r1 (21 Apr 2015)
+
+  21 Apr 2015; Piotr Chmielnicki <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.39-r1.ebuild, -clip-kernel-3.14.39.ebuild:
+  Added files/config-3.14.xen
+
+*clip-kernel-3.14.39 (20 Apr 2015)
+
+  20 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.39.ebuild, -clip-kernel-3.14.38.ebuild:
+  Bump kernel to 3.14.39, grsec to 3.1-3.14.39-201504190814.
+
+*clip-kernel-3.14.38 (15 Apr 2015)
+
+  15 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.38.ebuild, -clip-kernel-3.14.37.ebuild,
+  files/config-3.14.modular-smp:
+  Bump kernel to 3.14.38.
+
+*clip-kernel-3.14.37 (08 Apr 2015)
+
+  08 Apr 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.37.ebuild, -clip-kernel-3.14.36-r2.ebuild:
+  Bump kernel to 3.14.37, grsec to 3.1-3.14.37-201504051405, drop SMAP fix
+  included in upstream grsec.
+
+*clip-kernel-3.14.36-r2 (01 Apr 2015)
+
+  01 Apr 2015; ANSSI <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.36-r2.ebuild, -clip-kernel-3.14.36-r1.ebuild:
+  Bump clip-patches (SMAP fix + backport rtlwifi from 3.15).
+
+*clip-kernel-3.14.36-r1 (25 Mar 2015)
+
+  25 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.36-r1.ebuild, -clip-kernel-3.14.36.ebuild,
+  files/config-3.14.livecd:
+  Enable FUSION_MPT devices (RAID controller on Dell PE R200).
+
+*clip-kernel-3.14.36 (23 Mar 2015)
+
+  23 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.36.ebuild, -clip-kernel-3.14.35.ebuild:
+  Bump kernel to 3.14.36, grsec to 3.1-3.14.36-201503182218.
+
+*clip-kernel-3.14.35 (09 Mar 2015)
+
+  09 Mar 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.35.ebuild, -clip-kernel-3.14.32-r1.ebuild:
+  files/config-3.14.modular-smp, files/config-3.14.modular-smp.amd64,
+  files/config-3.14.livecd, files/config-3.14.devstation:
+  Bump kernel to 3.14.35, grsec to 3.1-3.14.35-201503071140.
+  Enable CONFIG_DRM_MGAG200 and CONFIG_BIGSMP, set CONFIG_NR_CPUS to 32, enable
+  CONFIG_GRKERNSEC_CHROOT_RENAME.
+  Refresh config for 3.14.35.
+
+*clip-kernel-3.14.32 (10 Feb 2015)
+
+  10 Feb 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.32.ebuild, -clip-kernel-3.14.29.ebuild,
+  files/config-3.14.livecd,
+  files/config-3.14.modular-smp,
+  files/config-3.14.modular-smp.amd64:
+  Bump kernel to 3.14.32, grsec to 3.0-3.14.32-201502062101.
+  Update x86 configurations to handle Eurisko RTC new config option.
+
+*clip-kernel-3.14.29 (21 Jan 2015)
+
+  02 Feb 2015; ANSSI <clipos@ssi.gouv.fr>
+  clip-kernel-3.14.29.ebuild,
+  +files/config-3.14.livecd.armada-370-eurisko,
+  +files/config-3.14.livecd.armada-370-mirabox,
+  +files/config-3.14.module-smp.armada-370-eurisko,
+  +files/config-3.14.module-smp.armada-370-mirabox,
+  +files/initrd-clip:
+  Bump of clip-patches for ARM Eurisko only.
+  More compliant guessing of ROOTDEVICE (e.g. mmcblk0p5).
+
+  21 Jan 2015; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.29.ebuild, -clip-kernel-3.14.27-r1.ebuild:
+  Bump kernel  to 3.14.29, grsec to 3.0-3.14.29-201501182217.
+
+*clip-kernel-3.14.27-r1 (06 Jan 2015)
+
+  06 Jan 2015; Thomas Letan <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.27-r1.ebuild, -clip-kernel-3.14.27.ebuild:
+  Add support for virtio to CLIP (VM)
+
+*clip-kernel-3.14.27 (31 Dec 2014)
+
+  31 Dec 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.27.ebuild, -clip-kernel-3.14.20.ebuild:
+  Bump to latest.
+
+  27 Nov 2014; Mickaël Salaün <clipos@ssi.gouv.fr>
+  clip-kernel-3.14.20.ebuild:
+  Add explicit version synchronisation with clip-hardware because of
+  compatibility check needed.
+
+*clip-kernel-3.14.20 (08 Oct 2014)
+
+  08 Oct 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.20.ebuild, -clip-kernel-3.14.19.ebuild:
+  Bump to kernel 3.14.20, bump grsec to 3.0-3.14.20-201410062037.
+
+*clip-kernel-3.14.19 (08 Oct 2014)
+
+  08 Oct 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.19.ebuild, -clip-kernel-3.14.18-r1.ebuild:
+  Bump to kernel to 3.14.19, bump grsec to 3.0-3.14.19-201409282024, add patch
+  to fix vserver on 3.14.19+ kernels.
+
+*clip-kernel-3.14.18-r1 (06 Oct 2014)
+
+  06 Oct 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.18-r1.ebuild, -clip-kernel-3.14.18.ebuild:
+  Rbump in order to introduce support for new ALPSv7 devices (needed for Toshiba
+  R30 mousewheel emulation support).
+
+*clip-kernel-3.14.18 (08 Sep 2014)
+
+  23 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  clip-kernel-3.14.18.ebuild:
+  Force PXE (NFS/IP_PNP) related options to 'y', modules don't make sense here.
+
+  08 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.18.ebuild, -clip-kernel-3.14.17-r1.ebuild:
+  Bump to 3.14.18, bump Grsecurity to 3.0-3.14.18-201409060013.
+
+*clip-kernel-3.14.17-r1 (05 Sep 2014)
+
+  05 Sep 2014; Tony Cheneau <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.17-r1.ebuild, -clip-kernel-3.14.17.ebuild:
+  Remove clip-pxe flag as the feature is now stable enough to be enabled all the
+  time on a livecd.
+  Make sure NFS related kernel features are compiled as a module for the livecd.
+
+*clip-kernel-3.14.17 (02 Sep 2014)
+
+  02 Sep 2014; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.17.ebuild, -clip-kernel-3.14.10-r2.ebuild, files/config-3.14.modular-smp:
+  Bump kernel to 3.14.17, bump grsec to 3.0-3.14.17-20140831, bump vserver to
+  3.14.17-vs2.3.6.13.
+  Explicit disable of USER_NS (since Grsecurity doesn't conflict with it
+  anymore) and X86_16BIT.
+
+*clip-kernel-3.14.10-r2 (07 Jul 2014)
+
+  07 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.10-r2.ebuild, -clip-kernel-3.14.10-r1.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.14.10-r1 (03 Jul 2014)
+
+  03 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.10-r1.ebuild, -clip-kernel-3.14.10.ebuild,
+  files/config-*:
+  Remove PAX_ELFRELOCS_FLAGS support, since this significantly
+  complexifies userland integration for no significant benefit.
+
+*clip-kernel-3.14.10 (02 Jul 2014)
+
+  02 Jul 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.10.ebuild, -clip-kernel-3.14.8-r1.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.14.8-r1 (25 Jun 2014)
+
+  25 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.8-r1.ebuild, -clip-kernel-3.14.8.ebuild:
+  Bump grsec.
+
+  20 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  -clip-kernel-2.6.32.42-r4.ebuild, -clip-kernel-3.2.60.ebuild,
+  -files/8139cp.c-2.6.31, -files/config-2.6.32.39.devstation,
+  -files/config-2.6.32.39.livecd, -files/config-2.6.32.39.modular-smp,
+  -files/config-3.2.2.livecd, -files/config-3.2.2.modular-smp,
+  -files/linux-2.6.32-asm-bitsperlong.patch,
+  -files/mkinitrd.clip, -files/mkinitrd.clip-3.10,
+  -files/postinst.firmware, -files/postinst.hso,
+  -files/postinst.kms, -files/postinst.newmods,
+  -files/postinst.udf:
+  Remove old.
+
+*clip-kernel-3.14.8 (20 Jun 2014)
+
+  20 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.8.ebuild, -clip-kernel-3.14.6-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.14.6-r1 (11 Jun 2014)
+
+  11 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.6-r1.ebuild, -clip-kernel-3.14.6.ebuild,
+  files/config-3.14.modular-smp:
+  Enable KASLR on clip config.
+
+*clip-kernel-3.14.6 (11 Jun 2014)
+
+  11 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.14.6.ebuild, -clip-kernel-3.13.11-r4.ebuild,
+  +files/config-3.14*, -files/config-3.13*:
+  Bump to 3.14 branch. Note: ARM configs not updated.
+
+*clip-kernel-3.2.60 (10 Jun 2014)
+
+  10 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.60.ebuild, -clip-kernel-3.2.58.ebuild:
+  Security bump to latest 3.2.
+
+*clip-kernel-3.13.11-r4 (06 Jun 2014)
+
+  06 Jun 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.13.11-r4.ebuild, -clip-kernel-3.13.11-r3.ebuild:
+  Bump clip-patches - security fix.
+
+*clip-kernel-3.13.11-r3 (30 May 2014)
+
+  30 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.13.11-r3.ebuild, -clip-kernel-3.13.11-r2.ebuild:
+  Bump clip-lsm - fix / cleanup some uid checks.
+
+*clip-kernel-3.13.11-r2 (19 May 2014)
+
+  19 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.13.11-r2.ebuild, -clip-kernel-3.13.11-r1.ebuild,
+  files/config-3.13.3.modular-smp:
+  Switch all crypto modules needed for WPA (incl. CCM, SEQIV, CTR)
+  to built-ins, otherwise we'd have a sh*load of modules to add
+  to every client hardware config.
+
+*clip-kernel-3.13.11-r1 (06 May 2014)
+
+  06 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.13.11-r1.ebuild, -clip-kernel-3.13.11.ebuild:
+  Rbump clip-patches - add tty patch.
+
+*clip-kernel-3.2.58 (06 May 2014)
+
+  06 May 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.58.ebuild, -clip-kernel-3.2.55-r1.ebuild:
+  Bump to latest 3.2, with latest grsec. Bump linux-debian-patches
+  and clip-lsm - simple rebase.
+
+  29 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-3.13.11.ebuild, -clip-kernel-3.10.12-r4.ebuild,
+  -files/config-3.10.1.devstation,
+  -files/config-3.10.1.livecd,
+  -files/config-3.10.1.livecd.imx6q-sabrelite,
+  -files/config-3.10.1.modular-smp,
+  -files/config-3.10.1.modular-smp.imx6q-sabrelite:
+  Stabilize 3.13.11 on x86, remove 3.10.
+
+*clip-kernel-3.13.11 (28 Apr 2014)
+
+  28 Apr 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.13.11.ebuild, -clip-kernel-3.13.3.ebuild,
+  +files/postinst.hso-3.13:
+  Bump to latest 3.13 release, bump grsec and vserver, and a
+  patch to fix resume from suspend-to-RAM with KERNEXEC on
+  x86.
+
+*clip-kernel-3.2.55-r1 (20 Mar 2014)
+
+  20 Mar 2014; ANSSI <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.55-r1.ebuild, -clip-kernel-3.2.55.ebuild:
+  Add clip-pxe use flag, for network installer.
+
+*clip-kernel-3.13.3 (05 Mar 2014)
+
+  05 Mar 2014; ANSSI <clipos@ssi.gouv.fr>
+  clip-kernel-3.13.3.ebuild:
+  Add mirabox configuration.
+
+*clip-kernel-3.2.55 (19 Feb 2014)
+
+  19 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.55.ebuild, -clip-kernel-3.2.54-r4.ebuild,
+  files/config-3.2.*:
+  Bump to latest stable. Bump grsec, bump clip-lsm (ptrace 
+  code cleanup). Do not activate PAX_RANDSTRUCT for now.
+
+*clip-kernel-3.2.54-r4 (05 Feb 2014)
+
+  05 Feb 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.54-r4.ebuild, -clip-kernel-3.2.54-r3.ebuild:
+  Bump clip-patches - grsec bump + add a patch to fix chromium
+  termination.
+
+*clip-kernel-3.2.54-r3 (20 Jan 2014)
+
+  20 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.54-r3.ebuild, -clip-kernel-3.2.54-r2.ebuild:
+  Bump grsec. Rebase debian drm patch.
+
+*clip-kernel-3.2.54-r2 (10 Jan 2014)
+
+  10 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.54-r2.ebuild, -clip-kernel-3.2.54-r1.ebuild:
+  Bump grsec.
+
+  09 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-3.2.2.livecd:
+  Add CONFIG_DEVTMPFS, required with newer udev.
+
+*clip-kernel-3.2.54-r1 (08 Jan 2014)
+
+  08 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.54-r1.ebuild, -clip-kernel-3.2.54.ebuild,
+  files/mkinitrd.clip:
+  Change module dep extraction in mkinitrd.clip to reflect new
+  format in modules.dep.
+
+*clip-kernel-3.10.12-r4 (08 Jan 2014)
+
+  08 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.12-r4.ebuild, -clip-kernel-3.10.12-r3.ebuild:
+  Change dependency on module-init-tools to kmod.
+
+*clip-kernel-3.2.54 (08 Jan 2014)
+
+  08 Jan 2014; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.54.ebuild, -clip-kernel-3.2.53-r1.ebuild:
+  Bump to latest, bump grsec, change dependency on module-init-tools
+  to kmod.
+
+*clip-kernel-3.2.53-r1 (17 Dec 2013)
+
+  17 Dec 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.53-r1.ebuild, -clip-kernel-3.2.53.ebuild,
+  files/config-3.2.2.modular-smp:
+  enable CRYPTO_GCM for RMB tunnels.
+
+*clip-kernel-3.2.53 (11 Dec 2013)
+
+  11 Dec 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.53.ebuild, -clip-kernel-3.2.52.ebuild,
+  files/config-3.2.2.modular-smp:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.52 (06 Nov 2013)
+
+  06 Nov 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.52.ebuild, -clip-kernel-3.2.51-r4.ebuild:
+  Bump to latest, bump grsec, rebase linux-debian patches.
+
+*clip-kernel-3.10.12-r3 (22 Oct 2013)
+
+  22 Oct 2013; ANSSI <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.12-r3.ebuild, -clip-kernel-3.10.12-r2.ebuild,
+  +files/config-3.10.1.modular-smp.imx6q-sabrelite,
+  +files/config-3.10.1.livecd.imx6q-sabrelite:
+  Bump clip-patches + ARM config files.
+
+*clip-kernel-3.2.51-r4 (14 Oct 2013)
+
+  14 Oct 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.51-r4.ebuild, -clip-kernel-3.2.51-r3.ebuild:
+  Add build-dependency on net-tools and module-init-tools.
+
+*clip-kernel-3.2.51-r3 (10 Oct 2013)
+
+  10 Oct 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.51-r3.ebuild, -clip-kernel-3.2.51-r2.ebuild,
+  files/initrd-clip:
+  Do not map partitions 12 and 13, since RM jails are now shared.
+
+*clip-kernel-3.10.12-r2 (25 Sep 2013)
+
+  25 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.12-r2.ebuild, -clip-kernel-3.10.12-r1.ebuild:
+  files/config-3.10.1.modular-smp, files/mkinitrd.clip-3.10,
+  +files/linux-3.10.1-asm-bitsperlong.patch,
+  -files/linux-3.10.1-asm-bitsperslong.patch:
+  Fix typo in patch name, bump clip-lsm, activate path-based 
+  LSM hooks and a few missing wireless drivers. 
+  Switch 3.10 kernel build to PENTIUM4 arch.
+  mkinitrd.clip-3.10: support [noload] options in /etc/modules*
+  to include a module in the initrd without trying to load it
+  explicitly - use case is iwldvm, which is automatically loaded
+  by iwlwifi when needed.
+
+*clip-kernel-3.10.12-r1 (25 Sep 2013)
+
+  25 Sep 2013; ANSSI <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.12-r1.ebuild, -clip-kernel-3.10.12.ebuild:
+  Bump clip-patches clip-lsm.
+
+*clip-kernel-3.2.51-r2 (24 Sep 2013)
+
+  24 Sep 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.51-r2.ebuild, -clip-kernel-3.2.51-r1.ebuild:
+  Bump clip-patches - Fix GRKERNSEC_TPE_GID with TPE_STRICT.
+
+*clip-kernel-3.10.12 (23 Sep 2013)
+
+  23 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.12.ebuild, -clip-kernel-3.10.9-r1.ebuild,
+  +files/initrd-modprobe, +files/mkinitrd.clip-3.10:
+  Bump to latest from 3.10 branch. Provide a substitute modprobe
+  in initrd, to support kernel_calls to request_module.
+
+*clip-kernel-3.2.51-r1 (19 Sep 2013)
+
+  19 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.51-r1.ebuild, -clip-kernel-3.2.51.ebuild:
+  Rbump clip-patches, clip-lsm - bump grsec and fix clsm init.
+
+*clip-kernel-3.2.51 (18 Sep 2013)
+
+  18 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.51.ebuild, -clip-kernel-3.2.50-r5.ebuild,
+  files/config-3.2.2*:
+  Bump to latest, bump grsec.
+  Rbump debian patch bundle - rebase a few patches.
+  Bump clip-lsm - rebase patch.
+  Set CONFIG_GRKERNSEC_DENYUSB to n.
+
+*clip-kernel-3.2.50-r5 (04 Sep 2013)
+
+  04 Sep 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.50-r5.ebuild, -clip-kernel-3.2.50-r4.ebuild:
+  Bump grsec - fix a few REFCOUNT false positives.
+
+*clip-kernel-3.2.50-r4 (29 Aug 2013)
+
+  29 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.50-r4.ebuild, -clip-kernel-3.2.50-r3.ebuild:
+  Bump grsec - fix a few hid CVEs.
+
+*clip-kernel-3.10.9-r1 (29 Aug 2013)
+
+  29 Aug 2013; ANSSI <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.9-r1.ebuild, -clip-kernel-3.10.9.ebuild:
+  Fix LSM patches to build clip-livecd kernel.
+
+*clip-kernel-3.10.9 (29 Aug 2013)
+
+  29 Aug 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.10.9.ebuild, files/config-3.10.1.devstation,
+  files/config-3.10.1.livecd, files/config-3.10.1.modular-smp,
+  files/linux-3.10.1-asm-bitperslong.patch:
+  Initial port to 3.10 kernel
+
+*clip-kernel-3.2.50-r3 (21 Aug 2013)
+
+  21 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.50-r3.ebuild, -clip-kernel-3.2.50-r2.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.50-r2 (19 Aug 2013)
+
+  19 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.50-r2.ebuild, -clip-kernel-3.2.50-r1.ebuild,
+  files/config-3.2.2.modular-smp:
+  Bump grsec patch. Switch arch to CONFIG_MPENTIUM4, which makes
+  more sense since we expect NX flag support.
+
+*clip-kernel-3.2.50-r1 (09 Aug 2013)
+
+  09 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.50-r1.ebuild, -clip-kernel-3.2.50.ebuild,
+  files/config-3.2.2.modular-smp:
+  Activate CONFIG_HIGH_RES_TIMERS for pulseaudio.
+
+*clip-kernel-3.2.50 (06 Aug 2013)
+
+  06 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.50.ebuild, -clip-kernel-3.2.48-r5.ebuild,
+  files/mkinitrd.clip:
+  Bump to latest, bump grsec. 
+
+*clip-kernel-3.2.48-r5 (01 Aug 2013)
+
+  01 Aug 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.48-r5.ebuild, -clip-kernel-3.2.48-r4.ebuild:
+  Bump clip-patches - add a patch to provide filtering of syscalls
+  on sound devices.
+
+*clip-kernel-3.2.48-r4 (25 Jul 2013)
+
+  25 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.48-r4.ebuild, -clip-kernel-3.2.48-r3.ebuild:
+  Re-add clip-lsm on clip-devstation - it is required to provide
+  clsm headers to userland progs that require them, e.g. verictl.
+
+*clip-kernel-3.2.48-r3 (25 Jul 2013)
+
+  25 Jul 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.48-r3.ebuild, -clip-kernel-3.2.48-r2.ebuild,
+  -config-3.2.2.devstation:
+  Use config.modular-smp for devstation as well (with some exceptions). Add
+  usefull dev features to devstation.
+  set_opt - Fix optval with quotes, cleanup.
+  unset_opt - Accept regex, allow to disable invisible option
+
+*clip-kernel-3.2.48-r2 (16 Jul 2013)
+
+  16 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.48-r2.ebuild, -clip-kernel-3.2.48-r1.ebuild:
+  Bump debian patches to 3.2.46-1.
+
+*clip-kernel-3.2.48-r1 (15 Jul 2013)
+
+  15 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.48-r1.ebuild, -clip-kernel-3.2.48.ebuild:
+  Bump grsec. Update firmware deps to include extra-firmwares.
+
+*clip-kernel-3.2.48 (09 Jul 2013)
+
+  09 Jul 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.48.ebuild, -clip-kernel-3.2.46-r2.ebuild,
+  files/config-3.2.2*:
+  Bump to latest, bump grsec, rbump debian patches to fix a 
+  few hunks. Activate CONFIG_GRKERNSEC_PERF_HARDEN.
+
+*clip-kernel-3.2.46-r2 (11 Jun 2013)
+
+  11 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.46-r2.ebuild, -clip-kernel-3.2.46-r1.ebuild:
+  Revert a patch from 3.2.41 which is suspected of breaking some
+  e1000e configs.
+
+*clip-kernel-3.2.46-r1 (05 Jun 2013)
+
+  05 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.46-r1.ebuild, -clip-kernel-3.2.46.ebuild:
+  Bump hotplug-clip dependency to ensure we have a working 
+  firmware loader when building the initrd.
+
+*clip-kernel-3.2.46 (04 Jun 2013)
+
+  04 Jun 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.46.ebuild, -clip-kernel-3.2.45-r1.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.45-r1 (24 May 2013)
+
+  24 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.45-r1.ebuild, -clip-kernel-3.2.45.ebuild,
+  files/mkinitrd.clip, -files/postinst.modrename:
+  Add a dependency on clip-hardware.
+  Update mkinitrd.clip to construct modules (resp firmares}
+  list from /etc/modules{,.extra,.blaclist} (resp /etc/firmwares*).
+  The intended logic is that /etc/<file> should be provided
+  from the clip-hardware profile, while /etc/<file>.{extra,blacklist}
+  should be part of the local installation config, respectively
+  to add or remove modules or firmwares from the base config.
+  Note that /etc/modules.extra can also be used to overload
+  options for a module that is already present in /etc/modules.
+
+*clip-kernel-3.2.45 (15 May 2013)
+
+  15 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.45.ebuild, -clip-kernel-3.2.44-r1.ebuild:
+  Bump to latest.
+  Revert one patch from stable queue which seems to break
+  some i915 configs.
+  Rbump linux-debian tarball - fix a few hunks in 0004-drm 
+  patch. Bump clip-lsm to fix a ptrace hunk.
+
+*clip-kernel-3.2.44-r1 (10 May 2013)
+
+  10 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.44-r1.ebuild, -clip-kernel-3.2.44.ebuild,
+  files/initrd-clip:
+  Bump clip-patches - add a patch to prevent EXT3-fs errors
+  when failing to mount an ext4 fs from showing up on the 
+  console at boot time. Kernel console verbosity is set up
+  in the initrd so that only messages up to KERN_ERR are
+  displayed.
+
+*clip-kernel-3.2.44 (03 May 2013)
+
+  03 May 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.44.ebuild, -clip-kernel-3.2.43-r4.ebuild:
+  Bump to latest, bump grsec.
+  Rbump linux-debian tarball - remove invert-brightness patches
+  merged into mainline.
+
+*clip-kernel-3.2.43-r4 (29 Apr 2013)
+
+  29 Apr 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.43-r4.ebuild, -clip-kernel-3.2.43-r3.ebuild,
+  files/postinst.newmods:
+  Add SD card support for TOSHIBA_Portege_R830.
+
+*clip-kernel-3.2.43-r3 (19 Apr 2013)
+
+  19 Apr 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.43-r3.ebuild, -clip-kernel-3.2.43-r2.ebuild,
+  files/initrd-clip:
+  Really handle ext4 in all mount commands.
+
+*clip-kernel-3.2.43-r2 (18 Apr 2013)
+
+  18 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.43-r2.ebuild, -clip-kernel-3.2.43-r1.ebuild:
+  Bump clip-patches - grsec bump.
+
+*clip-kernel-3.2.43-r1 (17 Apr 2013)
+
+  18 Apr 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  files/initrd-clip:
+  Handle mount of ext4 sysroot.
+
+  17 Apr 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.43-r1.ebuild, -clip-kernel-3.2.43.ebuild,
+  files/config-3.2.2.livecd:
+  Enable ext4 support in livecd too.
+
+*clip-kernel-3.2.43 (12 Apr 2013)
+
+  12 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.43.ebuild, -clip-kernel-3.2.42-r2.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.42-r2 (09 Apr 2013)
+
+  09 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.42-r2.ebuild, -clip-kernel-3.2.42-r1.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.42-r1 (04 Apr 2013)
+
+  04 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.42-r1.ebuild, -clip-kernel-3.2.42.ebuild:
+  Bump clip-patches - grsec bump.
+
+*clip-kernel-3.2.42 (03 Apr 2013)
+
+  03 Apr 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.42.ebuild, -clip-kernel-3.2.40-r2.ebuild:
+  Bump to latest. Add a new tarball of debian patches - limited
+  to drm bumps for now.
+
+*clip-kernel-3.2.40-r2 (15 Mar 2013)
+
+  15 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.40-r2.ebuild, -clip-kernel-3.2.40-r1.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.40-r1 (13 Mar 2013)
+
+  13 Mar 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.40-r1.ebuild, -clip-kernel-3.2.40.ebuild,
+  files/config-3.2.2.modular-smp:
+  Enable ext4 support.
+
+*clip-kernel-3.2.40 (08 Mar 2013)
+
+  08 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.40.ebuild, -clip-kernel-3.2.39-r3.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.39-r3 (07 Mar 2013)
+
+  07 Mar 2013; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.39-r3.ebuild, -clip-kernel-3.2.39-r2.ebuild:
+  Set default umask to 0077.
+
+*clip-kernel-3.2.39-r2 (04 Mar 2013)
+
+  04 Mar 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.39-r2.ebuild, -clip-kernel-3.2.39-r1.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.39-r1 (28 Feb 2013)
+
+  28 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.39-r1.ebuild, -clip-kernel-3.2.39.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.39 (26 Feb 2013)
+
+  26 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.39.ebuild, -clip-kernel-3.2.38-r1.ebuild:
+  Bump to latest, bump grsec.
+
+  20 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-3.2.38-r1.ebuild:
+  Fix clip-patches distfile.
+
+*clip-kernel-3.2.38-r1 (19 Feb 2013)
+
+  19 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.38-r1.ebuild, -clip-kernel-3.2.38.ebuild:
+  Bump clip-patches - bump grsec.
+
+*clip-kernel-3.2.38 (12 Feb 2013)
+
+  12 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.38.ebuild, -clip-kernel-3.2.37-r2.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.37-r2 (04 Feb 2013)
+
+  04 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.37-r2.ebuild, -clip-kernel-3.2.37-r1.ebuild:
+  Revert setup_arg_pages changes from last grsec bump - breaks chromium.
+
+*clip-kernel-3.2.37-r1 (01 Feb 2013)
+
+  01 Feb 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.37-r1.ebuild, -clip-kernel-3.2.37.ebuild:
+  Bump grsec to latest.
+
+*clip-kernel-3.2.37 (23 Jan 2013)
+
+  23 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.37.ebuild, -clip-kernel-3.2.36-r4.ebuild,
+  files/config-3.2.2*:
+  Bump to latest, bump grsec and vserver.
+  Enable CONFIG_GRKERNSEC_RAND_THREADSTACK, 
+  CONFIG_GRKERNSEC_DEVICE_SIDECHANNEL and 
+  CONFIG_GRKERNSEC_NO_SIMULT_CONNECT in all configs.
+
+*clip-kernel-3.2.36-r4 (14 Jan 2013)
+
+  14 Jan 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.36-r4.ebuild, -clip-kernel-3.2.36-r3.ebuild,
+  files/config-3.2.2.modular-smp:
+  Enable HID_MICROSOFT.
+
+*clip-kernel-3.2.36-r3 (11 Jan 2013)
+
+  11 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.36-r3.ebuild, -clip-kernel-3.2.36-r2.ebuild:
+  Bump clip-patches - add a patch to fix ping socket bind.
+
+*clip-kernel-3.2.36-r2 (09 Jan 2013)
+
+  09 Jan 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.36-r2.ebuild, -clip-kernel-3.2.36-r1.ebuild,
+  files/config-3.2.2.modular-smp:
+  Enable CONFIG_USB_EHCI_ROOT_HUB_TT and CONFIG_USB_EHCI_TT_NEWSCHED, needed for
+  Macbook Air.
+
+*clip-kernel-3.2.36-r1 (08 Jan 2013)
+
+  08 Jan 2013; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.36-r1.ebuild, -clip-kernel-3.2.36.ebuild:
+  RBump clip-patches for applesmc backport.
+
+*clip-kernel-3.2.36 (07 Jan 2013)
+
+  07 Jan 2013; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.36.ebuild, -clip-kernel-3.2.35-r1.ebuild:
+  Bump to latest, bump grsec and vserver.
+
+*clip-kernel-3.2.35 (10 Dec 2012)
+
+  10 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.35.ebuild, -clip-kernel-3.2.34-r6.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.34-r6 (04 Dec 2012)
+
+  04 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r6.ebuild, -clip-kernel-3.2.34-r5.ebuild:
+  Revert some pax changes which cause panic on boot.
+
+*clip-kernel-3.2.34-r5 (04 Dec 2012)
+
+  04 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r5.ebuild, -clip-kernel-3.2.34-r4.ebuild:
+  Bump grsec.
+
+  04 Dec 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r4.ebuild, -clip-kernel-3.2.34-r3.ebuild:
+  Correctly handle ROOT for emerging with --root.
+
+*clip-kernel-3.2.34-r4 (03 Dec 2012)
+
+  03 Dec 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r4.ebuild, -clip-kernel-3.2.34-r3.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.34-r3 (27 Nov 2012)
+
+  27 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r3.ebuild, -clip-kernel-3.2.34-r2.ebuild:
+  Revert a commit from 3.2.33 which breaks suspend to RAM.
+  Bump grsec - fix increasing file-nr.
+
+*clip-kernel-3.2.34-r2 (26 Nov 2012)
+
+  26 Nov 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r2.ebuild, -clip-kernel-3.2.34-r1.ebuild,
+  files/config-3.2.2.livecd:
+  Explicitely disable CONFIG_NET_QMI_WWAN.
+
+*clip-kernel-3.2.34-r1 (22 Nov 2012)
+
+  22 Nov 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34-r1.ebuild, -clip-kernel-3.2.34.ebuild,
+  files/config-3.2.2.modular-smp:
+  RBump clip-patches for qmi_wwan backport.
+  Enable CONFIG_USB_NET_QMI_WWAN, CONFIG_USB_WDM and CONFIG_USB_SERIAL_OPTION
+
+*clip-kernel-3.2.34 (19 Nov 2012)
+
+  19 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.34.ebuild, -clip-kernel-3.2.33.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.33 (13 Nov 2012)
+
+  13 Nov 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.33.ebuild, -clip-kernel-3.2.32-r4.ebuild,
+  files/config-3.2.2.modular-smp:
+  Bump to latest, bump grsec, add a few HID drivers.
+
+*clip-kernel-3.2.32-r4 (08 Nov 2012)
+
+  08 Nov 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.32-r4.ebuild, -clip-kernel-3.2.32-r3.ebuild,
+  files/config-3.2.2.modular-smp:
+  RBump clip-patches, add DEVTYPE=wwan for Ericsson wwan modules
+  Enable CDC_NCM and USB_ACM.
+
+*clip-kernel-3.2.32-r3 (07 Nov 2012)
+
+  07 Nov 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.32-r3.ebuild, -clip-kernel-3.2.32-r2.ebuild,
+  files/config-3.2.2.modular-smp:
+  enable serial drivers for Wacom serial touchscreen on HP2760p
+
+*clip-kernel-3.2.32-r1 (24 Oct 2012)
+
+  24 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.32-r1.ebuild, -clip-kernel-3.2.32.ebuild:
+  Bump clip-patches/grsec.
+
+*clip-kernel-3.2.32 (19 Oct 2012)
+
+  19 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.32.ebuild, -clip-kernel-3.2.31.ebuild:
+  Bump to latest stable.
+
+  18 Oct 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/config-3.2.2.devstation:
+  Add more namespaces.
+
+  17 Oct 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  clip-kernel-3.2.31.ebuild:
+  Cleanup build symlinks.
+
+*clip-kernel-3.2.31 (12 Oct 2012)
+
+  12 Oct 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.31.ebuild, -clip-kernel-3.2.30-r2.ebuild:
+  Bump to latest, bump grsec to latest.
+
+*clip-kernel-3.2.30-r2 (04 Oct 2012)
+
+  04 Oct 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.30-r2.ebuild, -clip-kernel-3.2.30-r1.ebuild:
+  Enable usb video cameras - CONFIG_MEDIA_SUPPORT, CONFIG_VIDEO_DEV,
+  CONFIG_VIDEO_V4L2_COMMON, CONFIG_VIDEO_MEDIA, CONFIG_VIDEO_V4L2,
+  CONFIG_VIDEO_CAPTURE_DRIVERS, CONFIG_V4L_USB_DRIVERS, CONFIG_USB_VIDEO_CLASS,
+  CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV, CONFIG_USB_GSPCA, CONFIG_USB_GSPCA_ZC3XX)
+
+*clip-kernel-3.2.30-r1 (26 Sep 2012)
+
+  26 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.30-r1.ebuild, -clip-kernel-3.2.30.ebuild:
+  Bump grsec patch.
+
+*clip-kernel-3.2.28-r5 (07 Sep 2012)
+
+  07 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.28-r5.ebuild, -clip-kernel-3.2.28-r4.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.28-r4 (05 Sep 2012)
+
+  05 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.28-r4.ebuild, -clip-kernel-3.2.28-r3.ebuild:
+  Bump clip-patches - add extra capability checks.
+
+*clip-kernel-3.2.28-r3 (05 Sep 2012)
+
+  05 Sep 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.28-r3.ebuild, -clip-kernel-3.2.28-r2.ebuild:
+  Bump clip-patches - bump grsec / vserver.
+
+*clip-kernel-3.2.28-r2 (30 Aug 2012)
+
+  30 Aug 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.28-r2.ebuild, -clip-kernel-3.2.28-r1.ebuild:
+  add CONFIG_HID_NTRIG=m for HP Slate 2 and DELL Latitude ST touchscreens
+  add CONFIG_USB_SERIAL=m, CONFIG_USB_SERIAL_QUALCOMM=m and
+  CONFIG_USB_SERIAL_WWAN=m for WWAN card support in the same tablets.
+
+*clip-kernel-3.2.28-r1 (24 Aug 2012)
+
+  24 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.28-r1.ebuild, -clip-kernel-3.2.27-r1.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.27-r1 (16 Aug 2012)
+
+  16 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.27-r1.ebuild, -clip-kernel-3.2.26-r1.ebuild:
+  Bump to latest, bump grsec and vserver patches.
+  N.B : bump straight to -r1 to leave 'r0' to the stable branch.
+
+*clip-kernel-3.2.26-r1 (06 Aug 2012)
+
+  06 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.26-r1.ebuild, -clip-kernel-3.2.26.ebuild:
+  Bump clip-lsm - add support for CLSM_PRIV_UNSHARE.
+
+*clip-kernel-3.2.26 (06 Aug 2012)
+
+  06 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.26.ebuild, -clip-kernel-3.2.24-r1.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.24-r1 (01 Aug 2012)
+
+  01 Aug 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.24-r1.ebuild, -clip-kernel-3.2.24.ebuild,
+  files/config-3.2.2.modular-smp:
+  Bump grsec, add seccomp to modular config.
+
+*clip-kernel-3.2.24 (30 Jul 2012)
+
+  30 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.24.ebuild, -clip-kernel-3.2.23.ebuild,
+  files/config-3.2.2*:
+  Bump to latest, bump grsec. Bump clip-lsm - fix patch following
+  changes to /proc access control code. Activate PAX_LATENT_ENTROPY
+  in all configs.
+
+  20 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-3.2.2.livecd:
+  Add xhci support to livecd config.
+
+*clip-kernel-3.2.23 (16 Jul 2012)
+
+  16 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.23.ebuild, -clip-kernel-3.2.22-r2.ebuild:
+  Bump to latest, bump grsec.
+
+*clip-kernel-3.2.22-r2 (09 Jul 2012)
+
+  09 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.22-r2.ebuild, -clip-kernel-3.2.22-r1.ebuild:
+  Bump grsec and vserver patches.
+
+*clip-kernel-3.2.22-r1 (06 Jul 2012)
+
+  06 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.22-r1.ebuild, -clip-kernel-3.2.22.ebuild,
+  files/config-3.2.2.modular-smp:
+  Set default iocharset to UTF-8.
+
+*clip-kernel-3.2.22 (06 Jul 2012)
+
+  06 Jul 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.22.ebuild, -clip-kernel-3.2.21.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.2.21 (21 Jun 2012)
+
+  21 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.21.ebuild, -clip-kernel-3.2.20-r1.ebuild,
+  files/config-3.2.2.modular-smp, files/config-3.2.2.livecd:
+  Bump to latest, bump pax. Disable CONFIG_PAX_SIZE_OVERFLOW
+  for now, needs more investigation (and makes my gcc ICE-out).
+
+*clip-kernel-3.2.20 (12 Jun 2012)
+
+  12 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.20.ebuild, -clip-kernel-3.2.19-r1.ebuild:
+  Bump to latest. Bump grsec and vserver.
+
+*clip-kernel-3.2.19-r1 (07 Jun 2012)
+
+  07 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.19-r1.ebuild, -clip-kernel-3.2.19.ebuild,
+  -files/postinst.x200, +files/postinst.newmods:
+  Bump clip-lsm - add enforce_inherit support for veriexec.
+  Add missing postinst.newmods postinst snippet, to add wireless
+  module and firmwares on DELL E6320.
+
+*clip-kernel-3.2.19 (05 Jun 2012)
+
+  05 Jun 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.19.ebuild, -clip-kernel-3.2.18-r3.ebuild,
+  files/config-3.2.2.modular-smp, files/config-3.2.2.livecd:
+  Bump to latest, bump grsec. Re-add AES-NI module in the CLIP
+  config, add it to the livecd config as well.
+
+  31 May 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/mkinitrd.clip:
+  Fix /dev mode.
+
+*clip-kernel-3.2.18-r3 (29 May 2012)
+
+  29 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.18-r3.ebuild, -clip-kernel-3.2.18-r2.ebuild:
+  Bump clip-patches - update grsec patch.
+
+*clip-kernel-3.2.18-r2 (24 May 2012)
+
+  24 May 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.18-r2.ebuild, -clip-kernel-3.2.18-r1.ebuild:
+  Fix out of frequency KVM display.
+
+*clip-kernel-3.2.18 (22 May 2012)
+
+  22 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.18.ebuild, -clip-kernel-3.2.16-r3.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.2.16-r3 (22 May 2012)
+
+  22 May 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.16-r3.ebuild, -clip-kernel-3.2.16-r2.ebuild,
+  files/config-3.2.2.modular-smp:
+  Remove single IP vserver optimization, that does not work that
+  great with virtual IPs.
+
+  21 May 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  clip-kernel-3.2.16-r2.ebuild:
+  Add more debug/devel + kgdboe.
+
+*clip-kernel-3.2.16-r2 (21 May 2012)
+
+  21 May 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.16-r2.ebuild, -clip-kernel-3.2.16-r1.ebuild:
+  Disable AES NI by default.
+
+*clip-kernel-3.2.16-r1 (25 Apr 2012)
+
+  25 Apr 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.16-r1.ebuild, -clip-kernel-3.2.16.ebuild,
+  files/initrd-clip:
+  Fix soft RAID.
+
+*clip-kernel-3.2.16 (24 Apr 2012)
+
+  24 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.16.ebuild, -clip-kernel-3.2.15-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.2.15-r1 (16 Apr 2012)
+
+  16 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.15-r1.ebuild, -clip-kernel-3.2.15.ebuild,
+  files/mkinitrd.clip:
+  Do not error out of initrd generation in case a requested 
+  module or firmware is missing - allows older kernels to 
+  be installed with only partial functionnality on newer configs.
+
+*clip-kernel-3.2.15 (13 Apr 2012)
+
+  13 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.15.ebuild, -clip-kernel-3.2.14.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.2.14 (04 Apr 2012)
+
+  04 Apr 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.14.ebuild, -clip-kernel-3.2.13-r4.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.2.13-r4 (04 Apr 2012)
+
+  04 Apr 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.13-r4.ebuild, -clip-kernel-3.2.13-r3.ebuild,
+  files/config-3.2.2.{modular-smp,livecd}:
+  Add RealTek PCI-E Card Reader support.
+
+*clip-kernel-3.2.13-r3 (02 Apr 2012)
+
+  02 Apr 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.13-r3.ebuild, -clip-kernel-3.2.13-r2.ebuild,
+  files/config-3.2.2.modular-smp, files/config-3.2.2.livecd,
+  files/mkinitrd.clip, files/uvesafb_install, +files/kms_install,
+  files/postinst.vga:
+  Fix uvesafb default mode + postinst.
+  Fix broken monitors (i.e. KVM switches) by loading generic EDID if video mode
+  is specified via bootargs.
+  Enable vm86 for clip-livecd.
+
+*clip-kernel-3.2.13-r2 (28 Mar 2012)
+
+  28 Mar 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.13-r2.ebuild, -clip-kernel-3.2.13-r1.ebuild:
+  Fix i915 black screen.
+
+*clip-kernel-3.2.13-r1 (27 Mar 2012)
+
+  27 Mar 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.13-r1.ebuild, -clip-kernel-3.2.13.ebuild,
+  files/config-3.2.2.modular-smp:
+  Add DRM drivers for Matrox, SIS and VIA.
+
+*clip-kernel-3.2.13 (27 Mar 2012)
+
+  27 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.13.ebuild, -clip-kernel-3.2.11-r1.ebuild:
+  Bump to latest + bump grsec.
+
+*clip-kernel-3.2.11-r1 (19 Mar 2012)
+
+  19 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.11-r1.ebuild, -clip-kernel-3.2.11.ebuild,
+  files/config-3.2.2*:
+  Bump clip-patches - grsec bump + reduce user ban timeout 
+  to 30s. Add CONFIG_PAX_SIZE_OVERFLOW.
+
+*clip-kernel-3.2.11 (16 Mar 2012)
+
+  16 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.11.ebuild, -clip-kernel-3.2.9-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.2.9 (05 Mar 2012)
+
+  05 Mar 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.9.ebuild, -clip-kernel-3.2.7.ebuild,
+  files/config-3.2.2-modular-smp:
+  Bump to latest, bump grsec, shrink the local loop network
+  to a /16. Add CONFIG_VETH and CONFIG_NET_NS.
+
+  01 Mar 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  clip-kernel-3.2.7.ebuild:
+  Allow module loading and unloading if clip-devel is set.
+
+*clip-kernel-3.2.7 (21 Feb 2012)
+
+  21 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.7.ebuild, -clip-kernel-3.2.6.ebuild:
+  Bump to latest. Bump grsec and vserver to latest.
+
+*clip-kernel-3.2.6 (14 Feb 2012)
+
+  14 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.6.ebuild, -clip-kernel-3.2.5-r1.ebuild:
+  Bump to latest. Bump grsec.
+
+*clip-kernel-3.2.5-r1 (13 Feb 2012)
+
+  13 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.5-r1.ebuild, -clip-kernel-3.2.5.ebuild:
+  Bump grsec.
+
+*clip-kernel-3.2.5 (10 Feb 2012)
+
+  10 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.5.ebuild, -clip-kernel-3.2.4.ebuild:
+  Bump to latest. Bump grsec.
+
+  07 Feb 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/config-3.2.2.{modular-smp,livecd}:
+  Include hpsa driver.
+
+*clip-kernel-3.2.4 (06 Feb 2012)
+
+  06 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.4.ebuild, -clip-kernel-3.2.2.ebuild:
+  Bump to latest, bump clip-patches with latest grsec.
+  Bump clip-lsm - make clsm_ops readonly.
+
+*clip-kernel-3.2.2 (01 Feb 2012)
+
+  01 Feb 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.2.2.ebuild, -clip-kernel-3.1.10.ebuild,
+  -files/config-3.0.3*, +files/config-3.2.2*,
+  files/postinst.modrename:
+  Bump to latest, bump grsec and vserver.
+  Note : iwlagn driver renamed to iwlwifi.
+
+  31 Jan 2012; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/config-3.0.3.devstation, files/config-3.0.3.livecd:
+  Explicitly unset Panjit config, otherwise oldconfig failed.
+
+*clip-kernel-3.1.10 (19 Jan 2012)
+
+  19 Jan 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.10.ebuild, -clip-kernel-3.1.8-r1.ebuild:
+  Bump to latest, bump grsec patch.
+
+*clip-kernel-3.1.8-r1 (11 Jan 2012)
+
+  11 Jan 2012; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.8-r1.ebuild, -clip-kernel-3.1.8.ebuild:
+  Bump clip-patches - include panjit touchscreen driver
+  config-3.0.3.modular-smp: enable panjit touchscreen, disable SERIO_RAW.
+
+*clip-kernel-3.1.8 (10 Jan 2012)
+
+  10 Jan 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.8.ebuild, -clip-kernel-3.1.7.ebuild:
+  Bump to latest. Bump grsec to latest.
+
+*clip-kernel-3.1.7 (04 Jan 2012)
+
+  04 Jan 2012; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.7.ebuild, -clip-kernel-3.1.6-r2.ebuild:
+  Bump to latest. Bump grsec to latest.
+
+*clip-kernel-3.1.6-r2 (30 Dec 2011)
+
+  30 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.6-r2.ebuild, -clip-kernel-3.1.6-r1.ebuild:
+
+*clip-kernel-3.1.6-r1 (26 Dec 2011)
+
+  26 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.6-r1.ebuild, -clip-kernel-3.1.6.ebuild,
+  files/config-3.0.3-*:
+  Bump clip-patches - include latest grsec patch, activate new
+  option CONFIG_GRKERNSEC_SETXID in all configs.
+
+*clip-kernel-3.1.6 (22 Dec 2011)
+
+  22 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.6.ebuild, -clip-kernel-3.1.5-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.1.5-r1 (12 Dec 2011)
+
+  12 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.5-r1.ebuild, -clip-kernel-3.1.5.ebuild,
+  files/config-3.0.3.modular-smp:
+  Activate VGA_ARB to solve blank screen at boot issues on 
+  some hardware.
+
+  13 Dec 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  files/config-3.0.3.livecd:
+  Enable Magic SysRq key for livecd.
+
+*clip-kernel-3.1.5 (12 Dec 2011)
+
+  12 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.5.ebuild, -clip-kernel-3.1.4-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.1.4-r1 (05 Dec 2011)
+
+  05 Dec 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.4-r1.ebuild, -clip-kernel-3.1.4.ebuild,
+  files/config-3.0.3.modular-smp:
+  Bump clip-patches - newest grsec patch.
+  Set CONFIG_SERIO_RAW in the config.
+
+*clip-kernel-3.1.4 (29 Nov 2011)
+
+  29 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.4.ebuild, -clip-kernel-3.1.3.ebuild:
+  Bump to latest, yada yada.
+
+*clip-kernel-3.1.3 (28 Nov 2011)
+
+  28 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.3.ebuild, -clip-kernel-3.1.2.ebuild:
+  Bump to latest.
+
+  24 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-3.1.2.ebuild:
+  Add conflict against clip-kernel-modular - modular kernel
+  will now be called clip-kernel only.
+
+*clip-kernel-3.1.2 (23 Nov 2011)
+
+  23 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.1.2.ebuild, -clip-kernel-3.0.9.ebuild,
+  +files/postinst.modrename, +files/config-3.0.3.modular-smp,
+  +files/config-3.0.3.livecd, +files/config-3.0.3.devstation,
+  -files/postinst.iwlwifi, +files/postinst.firmware:
+  Bump to latest. N.B. : RTL8192SE module renamed, and now requires
+  firmware in the initrd.
+  Remove clip-virtual support - no real value.
+
+*clip-kernel-3.0.9 (14 Nov 2011)
+
+  14 Nov 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.9.ebuild, -clip-kernel-3.0.8-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.0.8-r1 (09 Nov 2011)
+
+  09 Nov 2011; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.8-r1.ebuild, -clip-kernel-3.0.8.ebuild,
+  files/config-3.0.3.modular-smp:
+  Enable Agere network card (CONFIG_ET131X) for GoBook Duo Touch tablet.
+
+*clip-kernel-3.0.8 (25 Oct 2011)
+
+  25 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.8.ebuild, -clip-kernel-3.0.7-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-3.0.7-r1 (20 Oct 2011)
+
+  20 Oct 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.7-r1.ebuild, -clip-kernel-3.0.7.ebuild,
+  +clip-kernel-2.6.32.42-r4.ebuild, -clip-kernel-2.6.32.42-r3.ebuild,
+  files/mkinitrd.clip:
+  Fix firmware import with subdirectories.
+
+*clip-kernel-3.0.7 (18 Oct 2011)
+
+  18 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.7.ebuild, -clip-kernel-3.0.6-r4.ebuild:
+  Bump to latest, along with latest grsec.
+
+*clip-kernel-3.0.6-r4 (13 Oct 2011)
+
+  13 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.6-r4.ebuild, -clip-kernel-3.0.6-r3.ebuild:
+  Bump clip-patches - add fix for CVE-2011-2494.
+
+*clip-kernel-3.0.6-r3 (13 Oct 2011)
+
+  13 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.6-r3.ebuild, -clip-kernel-3.0.6-r2.ebuild:
+  Bump clip-patches - bump grsec, vserver and ALPS patches, 
+  split grsec+vserver patch in two.
+
+*clip-kernel-3.0.6-r2 (11 Oct 2011)
+
+  11 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.6-r2.ebuild, -clip-kernel-3.0.6-r1.ebuild:
+  Bump clip-patches - fix resume with ath5k driver.
+
+  11 Oct 2011; Yves-Alexis Perez <clipos@ssi.gouv.fr>:
+  Use CONFIG_NETCONSOLE module on debug.
+
+*clip-kernel-3.0.6-r1 (10 Oct 2011)
+
+  10 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.6-r1.ebuild, -clip-kernel-3.0.6.ebuild:
+  Bump clip-patches - fix build on linux-3.0 host.
+
+*clip-kernel-3.0.6 (05 Oct 2011)
+
+  05 Oct 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.6.ebuild, -clip-kernel-3.0.4-r3.ebuild:
+  Bump to 3.0.6, bump ALPS patch in clip-patches.
+
+*clip-kernel-3.0.4-r3 (29 Sep 2011)
+
+  29 Sep 2011; ANSSI <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.4-r3.ebuild, -clip-kernel-3.0.4-r2.ebuild:
+  Enable audit framework.
+  Bump clip-lsm - add support for the CLSM_PRIV_NETLINK_AUDIT
+  privilege.
+  Bump clip-patches - add vserver context information (xid) to
+  audit messages.
+
+*clip-kernel-3.0.4-r2 (26 Sep 2011)
+
+  26 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.4-r2.ebuild, -clip-kernel-3.0.4-r1.ebuild:
+  Bump clip-patches - bump grsec patch, remove useless keyboard
+  reset patch.
+
+*clip-kernel-3.0.4-r1 (07 Sep 2011)
+
+  07 Sep 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.4-r1.ebuild, -clip-kernel-3.0.4.ebuild:
+  Add missing dependency on latest wireless-firmwares.
+  Lower the priority of inocuous devctl read access warnings.
+  Bump clip-patches - latest grsec and vserver patches.
+
+*clip-kernel-3.0.4 (30 Aug 2011)
+
+  30 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.4.ebuild, -clip-kernel-3.0.3-r1.ebuild:
+  Bump to latest, bump grsec+vserver to latest.
+
+*clip-kernel-3.0.3-r1 (25 Aug 2011)
+
+  25 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.3-r1.ebuild, -clip-kernel-3.0.3.ebuild:
+  Bump clip-patches - update to grsec + more PAX_REFCOUNT fixes
+  in vserver code + add an upstream patch (from 3.1rc) to fix 
+  panics during suspend to RAM with iwlagn.
+
+*clip-kernel-3.0.3 (24 Aug 2011)
+
+  24 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-3.0.3.ebuild, -clip-kernel-2.6.39.4-r4.ebuild,
+  -files/config-2.6.39.3*, +files/config-3.0.3.*:
+  Bump to 3.0. Yep, simple as that.
+
+*clip-kernel-2.6.39.4-r4 (24 Aug 2011)
+
+  24 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.39.4-r4.ebuild, -clip-kernel-2.6.39.4-r3.ebuild:
+  Bump clip-patches - bump grsec+vserver, split it in two for easier
+  maintenance.
+  Bump clip-lsm - code cleanup following review by Alain Ozanne.
+
+*clip-kernel-2.6.39.4-r3 (17 Aug 2011)
+
+  17 Aug 2011; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.39.4-r3.ebuild, -clip-kernel-2.6.39.4-r2.ebuild,
+  files/initrd-clip:
+   - fix typo inverting the test for empty password in crypt0.
+
+*clip-kernel-2.6.39.4-r2 (16 Aug 2011)
+
+  16 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.39.4-r2.ebuild, -clip-kernel-2.6.39.4-r1.ebuild:
+  Bump clip-patches, add upstream patches for :
+   - sysfs_remove_battery race condition (#35642)
+   - ALPS touchpad initialization on some DELL notepads (#14660).
+   - fixes from 2.6.33.18: alsa timer NULL pointer dereference, use
+   MD5 to generate protocol sequence numbers.
+  Bump clip-lsm - make blocked signals messages INFO rather than WARNING.
+
+*clip-kernel-2.6.39.4-r1 (09 Aug 2011)
+
+  09 Aug 2011; Yves-Alexis Perez <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.39.4-r1.ebuild, -clip-kernel-2.6.39.4.ebuild,
+  files/initrd-clip: 
+  - replace shell exec by panic+reboot in case of critical error.
+  - add error handling in crypt0 code.
+
+*clip-kernel-2.6.39.4 (04 Aug 2011)
+
+  04 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.39.4.ebuild, -clip-kernel-2.6.39.3.ebuild,
+  +files/postinst.modrename, -files/postinst.brcm80211:
+  Bump to .4. Fix clip-lsm initialization issues. Add new 
+  /etc/modules fix : snd-hda-codec-intelhdmi -> snd-hda-codec-hdmi.
+
+*clip-kernel-2.6.39.3 (02 Aug 2011)
+
+  02 Aug 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.39.3.ebuild, -clip-kernel-2.6.38.8-r6.ebuild,
+  -files/config-2.6.38.8*, +files/config-2.6.39.3.*,
+  +files/postinst.brcm80211:
+  Bump to 2.6.39.3. Add postinst snippet to deal with the fact 
+  that brcm80211 was renamed to brcmsmac...
+
+*clip-kernel-2.6.38.8-r6 (29 Jul 2011)
+
+  29 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8-r6.ebuild, -clip-kernel-2.6.38.8-r5.ebuild,
+  +files/postint.iwlwifi:
+  Add a postinst snippet to add missing firmware files to /etc/firmwares
+  on hardware configs using iwlagn. The iwlagn module in kernel 2.6.38 now
+  requests its firmware at module init time, rather than when first accessing
+  the interface from userspace - hence the firmware needs to be in the 
+  initrd.
+  On the other hand, postinst.vga, postinst.kms and postinst.udf are no longer
+  included - these fixes should be applied everywhere by now.
+
+*clip-kernel-2.6.38.8-r5 (29 Jul 2011)
+
+  29 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8-r5.ebuild, -clip-kernel-2.6.38.8-r4.ebuild:
+  Bump clip-lsm - refine AF_NETLINK checks, so that CLSM_PRIV_NETLINK
+  is only required to use NETLINK sockets other than NETLINK_ROUTE, and
+  to send 'write' (SET/NEW/DEL) messages on a NETLINK_ROUTE socket. 
+  That way, we allow GET messages on NETLINK_ROUTE sockets without 
+  specific privileges, since such messages are sent all over the place
+  by pretty much any process accessing the network.
+
+*clip-kernel-2.6.38.8-r4 (26 Jul 2011)
+
+  26 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8-r4.ebuild, -clip-kernel-2.6.38.8-r3.ebuild:
+  Bump clip-lsm - fix fd transmission chroot checks, fix some build
+  errors with different config sets.
+
+*clip-kernel-2.6.38.8-r3 (19 Jul 2011)
+
+  19 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8-r3.ebuild, -clip-kernel-2.6.38.8-r2.ebuild:
+  Bump clip-patches - fix O_MAYEXEC support.
+
+  18 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.38.livecd:
+  Add ATA_PIIX and UHCI builtin drivers to livecd config, for
+  use in KVM.
+
+*clip-kernel-2.6.38.8-r2 (13 Jul 2011)
+
+  13 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8-r2.ebuild, -clip-kernel-2.6.38.8-r1.ebuild:
+  Bump clip-patches - force a keyboard reset on resume.
+
+*clip-kernel-2.6.38.8-r1 (11 Jul 2011)
+
+  11 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8-r1.ebuild, -clip-kernel-2.6.38.8.ebuild:
+  files/config-2.6.38.8*:
+  Bump clip-patches - add IT8781 GPIO board support.
+
+*clip-kernel-2.6.38.8 (08 Jul 2011)
+
+  08 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.38.8.ebuild, -clip-kernel-2.6.32.42-r3.ebuild:
+  New version to try to avoid creeping patchism on stable kernel
+  (a.k.a. the debian kernel syndrome...).
+
+*clip-kernel-2.6.32.42-r3 (08 Jul 2011)
+
+  08 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.42-r3.ebuild, -clip-kernel-2.6.32.42-r2.ebuild,
+  files/config-*:
+  Bump clip-patches - add it8781 GPIO board support.
+
+*clip-kernel-2.6.32.42-r2 (05 Jul 2011)
+
+  05 Jul 2011; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.42-r2.ebuild, -clip-kernel-2.6.32.42-r1.ebuild,
+  files/config-*:
+  IUSE clip-light - (only) hardened linux kernel.
+  Make explicit configurations.
+
+*clip-kernel-2.6.32.42-r1 (01 Jul 2011)
+
+  01 Jul 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.42-r1.ebuild, -clip-kernel-2.6.32.42.ebuild,
+  files/config-2.6.32.39.modular-smp:
+  Bump clip-patches, add rtl8192se support.
+
+*clip-kernel-2.6.32.42 (24 Jun 2011)
+
+  24 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.42.ebuild, -clip-kernel-2.6.32.41-r2.ebuild:
+  Bump to latest stable.
+  Bump clip-patches - minor bump to grsec patch, major bump from debian
+  to drm-update patch.
+
+  07 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.32.41-r2.ebuild, +files/linux-2.6.32-asm-bitsperlong.patch:
+  Add a patch to fix includes for userland compilation (clip-devstation only).
+
+*clip-kernel-2.6.32.41-r2 (07 Jun 2011)
+
+  07 Jun 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.41-r2.ebuild, -clip-kernel-2.6.32.41-r1.ebuild:
+  Bump clip-patches - grsec update + remove annoying '<task> did lookup
+  hidden <whatever>' vserver warnings (but keep other, more significant
+  vserver warnings).
+
+*clip-kernel-2.6.32.41-r1 (24 May 2011)
+
+  24 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.41-r1.ebuild, -clip-kernel-2.6.32.41.ebuild,
+  files/initrd-clip, files/mkinitrd.clip:
+  Re-add softraid support (add missing raidautorun call).
+
+*clip-kernel-2.6.32.41 (24 May 2011)
+
+  24 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.41.ebuild, -clip-kernel-2.6.32.40-r2.ebuild:
+  Bump to latest upstream, bump grsec to latest as well.
+  Bump clip-lsm - fix CLSM_PRIV_PROCFD logging.
+
+*clip-kernel-2.6.32.40-r2 (23 May 2011)
+
+  23 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.40-r2.ebuild, -clip-kernel-2.6.32.40-r1.ebuild:
+  Bump clip-lsm - fix CLSM_PRIV_PROCFD.
+  Bump clip-patches - fix iwlagn firmware loading.
+
+*clip-kernel-2.6.32.40-r1 (19 May 2011)
+
+  19 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.40-r1.ebuild, -clip-kernel-2.6.32.40.ebuild:
+  Bump clip-lsm - allow unprivileged (no CAP_SYS_ADMIN) fuse mount/umount
+  through CLSM_PRIV_FUSE.
+  Bump clip-patches - grsec bump.
+
+*clip-kernel-2.6.32.40 (16 May 2011)
+
+  16 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.40.ebuild, -clip-kernel-2.6.32.39-r2.ebuild,
+  files/config-*:
+  Bump to latest, CONFIG_PAX_MEMORY_STACKLEAK.
+
+*clip-kernel-2.6.32.39-r2 (11 May 2011)
+
+  11 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.39-r2.ebuild, -clip-kernel-2.6.32.39-r1.ebuild,
+  files/config-2.6.32.39.{modular-smp,livecd}:
+  Add missing drivers for some USB net adapters.
+
+*clip-kernel-2.6.32.39-r1 (05 May 2011)
+
+  05 May 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.39-r1.ebuild, files/config-2.6.32.39.*,
+  +clip-kernel-2.6.32.39.ebuild, -files/config-2.6.32.26.*:
+  Bump clip-lsm - add fuse support, and add CONFIG_FUSE to the modular 
+  config, and remove NTFS support from the kernel.
+  Remove '-clip' localversion.
+
+*clip-kernel-2.6.32.39 (27 Apr 2011)
+
+  27 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.39.ebuild, -clip-kernel-2.6.32.38.ebuild:
+  Bump to latest, bump grsec to latest (20110423).
+
+*clip-kernel-2.6.32.38 (20 Apr 2011)
+
+  20 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.38.ebuild, -clip-kernel-2.6.32.36-r1.ebuild,
+  files/config-*:
+  Bump to latest. Bump grsec to latest, add GRKERNSEC_KERN_LOCKOUT.
+  Simplify clip-patches and clip-lsm somewhat based on improvements
+  in grsec.
+
+*clip-kernel-2.6.32.36-r1 (01 Apr 2011)
+
+  01 Apr 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.36-r1.ebuild, -clip-kernel-2.6.32.36.ebuild,
+  files/config-*, files/initrd-clip:
+  Switch to homemade vs+grsec patch. Bump to latest grsec (2.2.2),
+  add GRKERNSEC_SYSFS_RESTRICT.
+  Encrypted root - do not try to decrypt useless RM partitions.
+
+*clip-kernel-2.6.32.36 (28 Mar 2011)
+
+  28 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.36.ebuild, -clip-kernel-2.6.32.35.ebuild,
+  files/initrd-clip, files/mkinitrd.clip, files/config-2.6.32.26.livecd:
+  Bump again to newest latest. Support 'crypt1' full-disk encryption
+  scheme. Add XTS support to livecd config.
+
+*clip-kernel-2.6.32.35 (25 Mar 2011)
+
+  25 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.35.ebuild, -clip-kernel-2.6.32.33-r1.ebuild,
+  files/mkinitrd.clip:
+  Bump to latest. Bump clip-patches - add fix for CVE-2011-1182.
+  Re-add verbose module messages to mkinitrd.clip.
+
+*clip-kernel-2.6.32.33-r1 (23 Mar 2011)
+
+  23 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.33-r1.ebuild, -clip-kernel-2.6.32.33.ebuild,
+  -files/mkinird.clip.2, files/mkinitrd.clip:
+  Bump clip-lsm :
+   - do not allow reading kern log buffer with CAP_SYS_ADMIN
+   - remove swapoff_open hooks, no longer needed since we don't
+   need to unmount /dev anymore
+  Initrd generation : rename new script to overwrite old. Change 
+  expected path for compiled fr mapping to avoid conflicts with
+  standard mappings.
+
+*clip-kernel-2.6.32.33 (22 Mar 2011)
+
+  22 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.33.ebuild, -clip-kernel-2.6.32.32-r3.ebuild:
+
+*clip-kernel-2.6.32.32-r3 (18 Mar 2011)
+
+  18 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.32-r3.ebuild, -clip-kernel-2.6.32.32-r2.ebuild,
+  files/config-2.6.32.26.modular-smp, +files/mkinitrd.clip.2, 
+  +files/initrd-clip:
+  Crypto - add XTS block chaining mode.
+  Switch to a fully sh-based initrd and a dynamic /dev to try to
+  provide support for (among others) encrypted root.
+
+*clip-kernel-2.6.32.32-r2 (11 Mar 2011)
+
+  11 Mar 2011; Arnauld Michelizza <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.32-r2.ebuild, -clip-kernel-2.6.32.32-r1.ebuild:
+  Bump clip-lsm - add some fixes enabling sys_swapoff to open swapfile.
+
+*clip-kernel-2.6.32.32-r1 (09 Mar 2011)
+
+  09 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.32-r1.ebuild, -clip-kernel-2.6.32.32.ebuild:
+  Bump clip-patches - add some fixes from git head for brcm80211.
+
+*clip-kernel-2.6.32.32 (08 Mar 2011)
+
+  08 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.32.ebuild, -clip-kernel-2.6.32.31.ebuild:
+  Bump to latest, again.
+
+  04 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.32.26.livecd:
+  Add wireless NICs and sound support to livecd config, for 
+  testing purposes.
+
+*clip-kernel-2.6.32.31 (04 Mar 2011)
+
+  04 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.31.ebuild, -clip-kernel-2.6.32.30.ebuild:
+  Bump to latest, again.
+
+*clip-kernel-2.6.32.30 (02 Mar 2011)
+
+  02 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.30.ebuild, -clip-kernel-2.6.32.28-r3.ebuild,
+  files/config-*:
+  Bump to latest, bump clip-vserver patch and bump clip-lsm to 
+  export get_task_cred.
+
+*clip-kernel-2.6.32.28-r3 (02 Mar 2011)
+
+  02 Mar 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.28-r3.ebuild, -clip-kernel-2.6.32.28-r2.ebuild,
+  files/mkinitrd.clip, -files/postinst.rootdisk:
+  Rbump to regenerate initrd after v86d update. Make mkinitrd.clip a
+  standalone binary so it can be run from another maintainer script next
+  time...
+
+*clip-kernel-2.6.32.28-r2 (18 Jan 2011)
+
+  18 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.28-r2.ebuild, -clip-kernel-2.6.32.28-r1.ebuild:
+  Bump clip-patches - add patch to make /dev/pts/ptmx visible in 
+  jails.
+
+*clip-kernel-2.6.32.28-r1 (17 Jan 2011)
+
+  17 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.28-r1.ebuild, -clip-kernel-2.6.32.28.ebuild:
+  Do not create vmlinuz-clip-old and initrd-clip-old.img any longer.
+
+*clip-kernel-2.6.32.28 (13 Jan 2011)
+
+  13 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.28.ebuild, -clip-kernel-2.6.32.27-r6.ebuild:
+  Bump to latest.
+
+*clip-kernel-2.6.32.27-r5 (06 Jan 2011)
+
+  06 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.27-r5.ebuild, -clip-kernel-2.6.32.27-r4.ebuild:
+  Bump clip-patches - add fix for CVE-2010-4158 (netfilter unitialized
+  memory leak to userspace).
+
+*clip-kernel-2.6.32.27-r4 (05 Jan 2011)
+
+  05 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.27-r4.ebuild, -clip-kernel-2.6.32.27-r3.ebuild:
+  Bump clip-lsm - allow non-local socket bind with any of the CLSM_PRIV_*,
+  not just CLSM_PRIV_NETSERVER - it is perfectly legitimate for a client
+  to bind to a local addr.
+
+*clip-kernel-2.6.32.27-r3 (03 Jan 2011)
+
+  03 Jan 2011; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.27-r3.ebuild, -clip-kernel-2.6.32.27-r2.ebuild,
+  files/config-2.6.32.26.modular-smp:
+  Bump gr+vs patch. Add PID_NS to default config.
+
+*clip-kernel-2.6.32.27-r2 (23 Dec 2010)
+
+  23 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.27-r2.ebuild, -clip-kernel-2.6.32.27-r1.ebuild:
+  Bump clip-patches - extend O_MAYEXEC checks to directories.
+
+*clip-kernel-2.6.32.27-r1 (15 Dec 2010)
+
+  15 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.27-r1.ebuild, -clip-kernel-2.6.32.27.ebuild,
+  files/config-2.6.32.26.modular-smp:
+  Bump clip-patches to update intel-iommu, and enable it by default
+  in the config.
+
+*clip-kernel-2.6.32.27 (10 Dec 2010)
+
+  10 Dec 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.27.ebuild, -clip-kernel-2.6.32.26.ebuild:
+  Bump to latest.
+
+*clip-kernel-2.6.32.26 (29 Nov 2010)
+
+  29 Nov 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.26.ebuild, -clip-kernel-2.6.32.25-r1.ebuild:
+  -files/files/config-2.6.32.12-r1.*, +files/files/config-2.6.32.26*:
+  Bump to latest stable, bump clip-patches (brcm update, CVE fixes, 
+  smallish drm fixes), finally rename configs (only addition however
+  is to add GRKERNSEC_RWXMAP_LOG).
+
+*clip-kernel-2.6.32.25-r1 (09 Nov 2010)
+
+  09 Nov 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.25-r1.ebuild, -clip-kernel-2.6.32.25.ebuild:
+  Bump clip-lsm, fix for clsm_ptrace logging by Olivier Levillain.
+
+*clip-kernel-2.6.32.25 (29 Oct 2010)
+
+  29 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.25.ebuild, -clip-kernel-2.6.32.23-r5.ebuild:
+  Switch to latest.
+
+*clip-kernel-2.6.32.23-r5 (27 Oct 2010)
+
+  27 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.23-r5.ebuild, -clip-kernel-2.6.32.23-r4.ebuild,
+  files/config-2.6.32.12-r1.modular.smp, files/postinst.kms:
+  Add radeon and nvidia video options. 
+  Bump clip-lsm - add CLSM_PRIV_DRM. 
+  Bump clip-patches - bump drm update patch, smallish fix for brcm80211
+  and add newer nics support to atl1c driver.
+  Add GRKERNSEC_KMEM and remove VGA_ARB. Add nouveau.
+
+*clip-kernel-2.6.32.23-r4 (25 Oct 2010)
+
+  25 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.23-r4.ebuild, -clip-kernel-2.6.32.23-r3.ebuild:
+  Remove CONFIG_IP_MULTIPLE_TABLES added for -r1 - this messes up arp 
+  for RM jails...
+
+*clip-kernel-2.6.32.23-r3 (25 Oct 2010)
+
+  25 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.23-r3.ebuild, -clip-kernel-2.6.32.23-r2.ebuild,
+  files/mkinitrd.clip:
+  Use hotplug static binary from hotplug-clip as hotplug, when firmware
+  loading is needed, instead of shell script.
+
+*clip-kernel-2.6.32.23-r2 (19 Oct 2010)
+
+  19 Oct 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.23-r2.ebuild, -clip-kernel-2.6.32.23-r1.ebuild,
+  files/files/config-2.6.32.12-r1.modular-smp:
+  Bump clip-patches, add staging brcm80211 wireless driver.
+  Config : add several Broadcom/Realtek/Ralink staging wireless drivers.
+
+*clip-kernel-2.6.32.23-r1 (30 Sep 2010)
+
+  30 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.23-r1.ebuild, -clip-kernel-2.6.32.23.ebuild,
+  files/config-2.6.32.12-r1.modular-smp:
+  Add CONFIG_IP_MULTIPLE_TABLES for strongswan.
+  Bump clip-patches - add patch for snd_ctl_new integer overflow
+  (CERTA-2010-AVI-460).
+
+*clip-kernel-2.6.32.23 (27 Sep 2010)
+
+  27 Sep 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.23.ebuild, -clip-kernel-2.6.32.21.ebuild,
+  files/config-2.6.32.12-r1.modular-smp:
+  Bump to latest, select PAX_REFCOUNT.
+  Add IUSE debug to compile a debug-able kernel.
+  Bump clip-lsm - make security_ops read/write again...
+
+  30 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.32.20.ebuild, files/config-2.6.32.12-r1.livecd:
+  Re-add ACPI battery/ac support. Remove GRKERNSEC_IO/KMEM and
+  do not apply clip-lsm patch for clip-livecd.
+
+*clip-kernel-2.6.32.21 (27 Aug 2010)
+
+  27 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.21.ebuild, -clip-kernel-2.6.32.20.ebuild:
+  Bump to latest.
+
+  26 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.32.12-r1.livecd:
+  Switch to fully modular config.
+
+  24 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.32.20.ebuild, files/config-2.6.32.12-r1.livecd:
+  Provide virtual/linux-sources, add missing features to livecd 
+  config and start switch to a modular config for that.
+
+*clip-kernel-2.6.32.20 (23 Aug 2010)
+
+  23 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.20.ebuild, -clip-kernel-2.6.32.18-r1.ebuild:
+  Bump to latest for a full fix to CVE-2010-2240.
+
+*clip-kernel-2.6.32.18-r2 (20 Aug 2010)
+
+  20 Aug 2010; Mickaël Salaün <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.18-r2.ebuild, -clip-kernel-2.6.32.18-r1.ebuild:
+  Add stack guard page patch: CVE-2010-2240.
+
+*clip-kernel-2.6.32.18-r1 (11 Aug 2010)
+
+  11 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.18-r1.ebuild, -clip-kernel-2.6.32.18.ebuild:
+  Bump clip-lsm - proper script support in veriexec.
+
+*clip-kernel-2.6.32.18 (11 Aug 2010)
+
+  11 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.18.ebuild, -clip-kernel-2.6.32.17.ebuild,
+  +files/postinst.rootdisk:
+  Bump. Also install copies (for now) of kernel and initrd under
+  vmlinuz-clip.#NUM / initrd-clip.img.#NUM, where #NUM is the
+  current root partition number - this should in time provide a 
+  better way to manage kernels than .old.
+
+*clip-kernel-2.6.32.17 (03 Aug 2010)
+
+  03 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.17.ebuild, -clip-kernel-2.6.32.16-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-2.6.32.16-r1 (02 Aug 2010)
+
+  02 Aug 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.16-r1.ebuild, -clip-kernel-2.6.32.16.ebuild:
+  Bump clip-patches - fix memory corruption issues with i915 when
+  resuming from hibernation (and hopefully also suspend, which is 
+  what we've been encountering).
+
+*clip-kernel-2.6.32.16 (07 Jul 2010)
+
+  07 Jul 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.16.ebuild, -clip-kernel-2.6.32.15-r1.ebuild,
+  files/postinst.kms:
+  Bump to latest. Bump clip-patches - newer grsec+vserver patch.
+  Add a non-machine-specific way of specifying video drivers, through
+  /etc/shared/video (new install param).
+
+*clip-kernel-2.6.32.15-r1 (09 Jun 2010)
+
+  09 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.15-r1.ebuild, -clip-kernel-2.6.32.15.ebuild:
+  files/postinst.kms:
+  Add Lenovo R500 to KMS list.
+
+*clip-kernel-2.6.32.15 (03 Jun 2010)
+
+  03 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.15.ebuild, -clip-kernel-2.6.32.12-r5.ebuild:
+  Bump to latest stable kernel. Bump clip-patches, update drm update
+  patch to Ubuntu 2.6.32-22.35.
+
+*clip-kernel-2.6.32.12-r5 (02 Jun 2010)
+
+  02 Jun 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.12-r5.ebuild, -clip-kernel-2.6.32.12-r4.ebuild,
+  files/config-2.6.32.12-r1.modular-smp:
+  Add NTFS support as builtin.
+
+*clip-kernel-2.6.32.12-r4 (31 May 2010)
+
+  31 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.12-r4.ebuild, -clip-kernel-2.6.32.12-r3.ebuild,
+  files/postinst.hso:
+  Add missing tty_major=252 to initial hso postinst.
+  Bump clip-patches - better logging of denied relocations.
+
+*clip-kernel-2.6.32.12-r3 (26 May 2010)
+
+  26 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.12-r3.ebuild, -clip-kernel-2.6.32.12-r2.ebuild,
+  files/config-2.6.32.12-r1.modular-smp:
+  Switch NF_CONNTRACK_FTP to a built-in.
+
+*clip-kernel-2.6.32.12-r2 (21 May 2010)
+
+  21 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.12-r2.ebuild, -clip-kernel-2.6.32.12-r1.ebuild,
+  files/postinst.kms:
+  Add Lenovo X60 to KMS list.
+
+*clip-kernel-2.6.32.12-r1 (10 May 2010)
+
+  10 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.12-r1.ebuild, -clip-kernel-2.6.32.12.ebuild,
+  -files/config-2.6.32.12*, +files/config-2.6.32.12-r1*:
+  Add suspend, event interface and acpi events, make acpi button a
+  builtin.
+
+*clip-kernel-2.6.32.12 (06 May 2010)
+
+  06 May 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.12.ebuild, -clip-kernel-2.6.32.11-r3.ebuild,
+  -files/config-2.6.32.9*, +files/config-2.6.32.12*:
+  Bump to latest. Bump clip-patches - add newest vs+grsec patch, 
+  add patch to enable elf relocs only on files by executables marked
+  PF_ELFRELOC.
+
+*clip-kernel-2.6.32.11-r3 (29 Apr 2010)
+
+  29 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.11-r3.ebuild, -clip-kernel-2.6.32.11-r2.ebuild,
+  files/postinst.x200:
+  Fix buggy postinst.
+
+*clip-kernel-2.6.32.11-r2 (20 Apr 2010)
+
+  20 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.11-r2.ebuild, -clip-kernel-2.6.32.11-r1.ebuild,
+  files/config-2.6.32.9-r1.modular-smp:
+  Bump clip-patches, bump vs+gr patch, remove option patch (will do
+  this in userland with hotplug, kernel land fix does not work on
+  newer devices).
+  Added usbfs and usb_device class to modular config.
+
+*clip-kernel-2.6.32.11-r1 (19 Apr 2010)
+
+  19 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.11-r1.ebuild, -clip-kernel-2.6.32.11.ebuild,
+  +files/postinst.x200:
+  Change HDA codec on Lenovo X200 to snd-hda-codec-conexant.
+
+*clip-kernel-2.6.32.11 (07 Apr 2010)
+
+  07 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.11.ebuild, -clip-kernel-2.6.32.10-r2.ebuild:
+  Bump to latest.
+
+*clip-kernel-2.6.32.10-r2 (01 Apr 2010)
+
+  01 Apr 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.10-r2.ebuild, -clip-kernel-2.6.32.10-r1.ebuild,
+  files/postinst.kms:
+  Be more lenient on thinkpad-crt delete in postinst.kms - there might
+  be options (i965_membase on X200).
+
+*clip-kernel-2.6.32.10-r1 (22 Mar 2010)
+
+  22 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.10-r1.ebuild, -clip-kernel-2.6.32.10.ebuild,
+  files/postinst.kms:
+  Bump clip-patches - fake a CRT detection on 965GM graphic chips
+  to enable LVDS output (don't ask me why this is needed). Fixes
+  console output on Latitude D530. Intel KMS is now enabled on 
+  all Latitude and Thinkpad laptops.
+
+*clip-kernel-2.6.32.10 (18 Mar 2010)
+
+  18 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.10.ebuild, -clip-kernel-2.6.32.9-r4.ebuild:
+
+*clip-kernel-2.6.32.9-r3 (11 Mar 2010)
+
+  09 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.9-r3.ebuild, -clip-kernel-2.6.32.9-r2.ebuild,
+  files/mkinitrd.clip, files/config-2.6.32.9-r1.modular-smp, 
+  files/postinst.vga, +files/postinst.kms, +files/uvesafb_install:
+  Bump clip-patches (grsec bump).
+  Add KMS support, automatically switching modules and bootargs for
+  DELL_Latitude and LENOVO_Thinkpad models to use i915 (KMS enabled
+  by default). uvesafb is now a module, which gets loaded with the
+  proper parameters from the initrd, when KMS is not supported.
+  Bootargs and extlinux entries are automatically switch from
+  video=uvesafb:<modedb>,.... to simply video=<modedb>.
+  Remove thinkpad-crt from /etc/modules.
+
+*clip-kernel-2.6.32.9-r2 (05 Mar 2010)
+
+  05 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.9-r2.ebuild, -clip-kernel-2.6.32.9-r1.ebuild,
+  files/mkinitrd.clip:
+  Fix handling of firmware files in initrd, fix firmware_open default
+  hook in clip-lsm.
+
+*clip-kernel-2.6.32.9-r1 (04 Mar 2010)
+
+  04 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.9-r1.ebuild, -clip-kernel-2.6.32.9.ebuild,
+  -files/config-2.6.32.8*, +files/config-2.6.32.9-r1*:
+  Bump configs - add MegaRAID SCSI and NetXtreme 10Gb NIC support
+  to both modular and livecd configs.
+
+*clip-kernel-2.6.32.9 (02 Mar 2010)
+
+  02 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.9.ebuild, -clip-kernel-2.6.32.8-r1.ebuild:
+  Bump to .9.
+
+*clip-kernel-2.6.32.8-r1 (02 Mar 2010)
+
+  02 Mar 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.8-r1.ebuild, -clip-kernel-2.6.32.8.ebuild:
+  Bump clip-patches (grsec bump).
+
+*clip-kernel-2.6.32.8 (17 Feb 2010)
+
+  17 Feb 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.32.8.ebuild, -clip-kernel-2.6.31.8-r1.ebuild,
+  -files/config-2.6.31.5*, +files/config-2.6.32.8*,
+  +files/postinst.udf:
+  Bump to 2.6.32.8. Add traced mounts support in clip-lsm. Add udf
+  to default config.
+
+*clip-kernel-2.6.31.8-r1 (08 Jan 2010)
+
+  08 Jan 2010; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.31.8-r1.ebuild, -clip-kernel-2.6.31.8.ebuild,
+  files/postinst.hso:
+  Have the postinst force the hso tty to 252 (rather than the 
+  253 it has switched to).
+
+*clip-kernel-2.6.31.8 (15 Dec 2009)
+
+  15 Dec 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.31.8.ebuild, -clip-kernel-2.6.31.6.ebuild,
+  -files/postinst.x61:
+  Bump to latest. Update vs+grsec patch in clip-patches.
+
+*clip-kernel-2.6.31.6 (10 Nov 2009)
+
+  10 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.31.6.ebuild, -clip-kernel-2.6.31.5.ebuild:
+  Bump to .6. clip-patches bumped as well from .5 version.
+
+*clip-kernel-2.6.31.5 (09 Nov 2009)
+
+  09 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.31.5.ebuild, -clip-kernel-2.6.29.6-r7.ebuild,
+  -files/config-2.6.29.6-r4*, +files/config-2.6.31.5*,
+  -files/8139cp.c-2.6.29, +files/8139cp.c-2.6.31,
+  files/postinst.x61, files/mkinitrd:
+  Bump to latest stable.
+
+*clip-kernel-2.6.29.6-r7 (06 Nov 2009)
+
+  06 Nov 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r7.ebuild, -clip-kernel-2.6.29.6-r6.ebuild,
+  files/config-2.6.29.6-r4.modular-smp, +files/postinst.x61:
+  Bump clip-patches - add thinkpad CRT enabler (note : change 
+  postinst.x61 on next update, to use /etc/core/machine instead).
+  Add fix for CVE-2009-3547 (pipe NULL ptr).
+
+*clip-kernel-2.6.29.6-r6 (30 Oct 2009)
+
+  30 Oct 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r6.ebuild, -clip-kernel-2.6.29.6-r5.ebuild,
+  files/config-2.6.29.6-r4.modular-smp, files/mkinitrd.clip,
+  +files/postinst.hso:
+  Fix commented-out module deactivation switch in initrd generation.
+  Add CONFIG_VIDEO_OUTPUT and CONFIG_ACPI_VIDEO to config.
+  Automatically add 'hso' to /etc/modules for 3G support.
+
+*clip-kernel-2.6.29.6-r5 (29 Oct 2009)
+
+  29 Oct 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r5.ebuild, -clip-kernel-2.6.29.6-r4.ebuild,
+  -files/config-2.6.29.6-r3*, +files/config-2.6.29.6-r4*,
+  -files/config-2.6.29.6-r3.modular:
+  Bump configs - add USB_LIBUSUAL. Remove unused non-SMP config, 
+  remove IUSE clip-smp.
+  Bump clip-patches - add patch to force modem mode on some missing
+  Option 3G cards.
+
+*clip-kernel-2.6.29.6-r4 (26 Aug 2009)
+
+  26 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r4.ebuild, -clip-kernel-2.6.29.6-r3.ebuild:
+  -files/config-2.6.29.6-r2*, +files/config-2.6.29.6-r3*:
+  Activate netfilter's REJECT and TCPMSS targets.
+
+*clip-kernel-2.6.29.6-r3 (17 Aug 2009)
+
+  17 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r3.ebuild, -clip-kernel-2.6.29.6-r2.ebuild:
+  Bump clip-patches, fix CVE-2009-2692 (DoS only thanks to UDEREF).
+
+*clip-kernel-2.6.29.6-r2 (06 Aug 2009)
+
+  06 Aug 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r2.ebuild, -clip-kernel-2.6.29.6-r1.ebuild,
+  -files/config-2.6.29.6-r1*, +files/config-2.6.29.6-r2*,
+  files/mkinitrd.clip, +files/postinst.vga:
+  Miscellaneous features to support UVESAFB as a replacement for
+  VESAFB:
+   - bump clip-patches, patch uvesafb to pass its mode as argument
+     to v86d, patch to enable building uvesafb as module (not used
+     at the moment...)
+   - bump clip-lsm, have it manage access control to /dev/{mem,kmem,ports}
+     and to I/O registers (iopl/ioperm), instead of grsec, to enable 
+     processes launched before CLSM is loaded to access memory that way
+     (needed for v86d).
+   - bump configs, remove vesafb, add uvesafb, remove GRKERNSEC_IO/KMEM,
+     (replaced by clip-lsm hooks).
+   - have mkinitrd include v86d (and needed devices) in initrd.
+   - update bootloader and bootargs file in postinst, to change vesafb
+     video parameters into uvesafb ones.
+
+*clip-kernel-2.6.29.6-r1 (16 Jul 2009)
+
+  17 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6-r1.ebuild, -clip-kernel-2.6.29.6.ebuild,
+  -files/config-2.6.29.6*, +files/config-2.6.29.6-r1*:
+  Bump clip-patches - use latest official grsec+vserver patch
+  (20090709). Bump configs to take into account GRKERNSEC_NO_RBAC
+  and GRKERNSEC_BLACKHOLE.
+  Bump clip-lsm : fix sleep-inside-lock bug when vrx_cache_clear
+  is called in the veriexec entry free RCU callback.
+
+  09 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.29.5.ebuild,
+  -files/config-2.6.29.5*, +files/config-2.6.29.5-r1*,
+  -files/_debian:
+  Bump configs, add more wireless drivers (ralink, atmel), 
+  add more laptop vendor-specific acpi modules.
+  Move vmlinuz-clip{,-old} and initrd copy in pkg_predeb() 
+  instead of static maintainer scripts, and avoid adding them
+  to virtual packages.
+
+*clip-kernel-2.6.29.6 (06 Jul 2009)
+
+  06 Jul 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.6.ebuild, -clip-kernel-2.6.29.5-r1.ebuild:
+  Bump to latest.
+
+*clip-kernel-2.6.29.5-r1 (29 Jun 2009)
+
+  29 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.5-r1.ebuild, -clip-kernel-2.6.29.5.ebuild,
+  -files/config-2.6.29.5*, +files/config-2.6.29.5-r1*:
+  Make CONFIG_USB_PRINTER a builtin. Activate led support for 
+  intel wifi drivers.
+
+*clip-kernel-2.6.29.5 (24 Jun 2009)
+
+  24 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.5.ebuild, -clip-kernel-2.6.29.4-r4.ebuild,
+  -files/config-2.6.28.9-r1*, +files/config-2.6.29.5*:
+  Bump to 2.6.29.5. Bump clip-patches to include upstream fixes 
+  for vserver. Bump configs to add PAX_USERCOPY.
+
+*clip-kernel-2.6.29.4-r4 (19 Jun 2009)
+
+  19 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.4-r4.ebuild, -clip-kernel-2.6.29.4-r3.ebuild,
+  files/_debian/postinst, files/_debian/prerm:
+  Fix postinst / prerm copying of initrd.
+  Bump clsm: better inode locking when accessing inode->security.
+
+*clip-kernel-2.6.29.4-r3 (12 Jun 2009)
+
+  12 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.4-r3.ebuild, -clip-kernel-2.6.29.4-r2.ebuild:
+  Bump clip-lsm - fix cap_inheritable propagation bug.
+  Fix veriexec flags propagation.
+  Fix CLSM_PRIV_PROCFD usage on non-dumpable tasks.
+
+*clip-kernel-2.6.29.4-r2 (03 Jun 2009)
+
+  03 Jun 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.4-r2.ebuild, -clip-kernel-2.6.29.4-r1.ebuild:
+  Bump CLIP-LSM, adds a new privilege CLSM_PRIV_FIRMWARE to allow
+  firmware loading without CAP_SYS_RAWIO.
+
+*clip-kernel-2.6.29.4-r1 (29 May 2009)
+
+  29 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.4-r1.ebuild, -clip-kernel-2.6.29.4.ebuild,
+  -files/config-2.6.28.9*, +files/config-2.6.28.9-r1*,
+  files/mkinitrd.clip:
+  Add wireless stack and wireless modules to modular configs.
+  Add support for integrating firmwares in the initrd.
+
+*clip-kernel-2.6.29.4 (22 May 2009)
+
+  22 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.29.4.ebuild, -clip-kernel-2.6.28.10.ebuild,
+  +files/config-2.6.29.4.devstation, +files/config-2.6.29.4.livecd,
+  +files/config-2.6.29.4.modular, +files/config-2.6.29.4.modular-smp,
+  -files/config-2.6.28.9.devstation, -files/config-2.6.28.9.livecd,
+  -files/config-2.6.28.9.modular, -files/config-2.6.28.9.modular-smp,
+  -files/8139cp.c-2.6.28.9, +files/8139cp.c-2.6.29,
+  -files/squashfs-3.4.patch:
+  Bump to 2.6.29. clip-patches and clip-lsm bumped. Remove squashfs patch,
+  which is now included in mainline.
+
+*clip-kernel-2.6.28.10 (04 May 2009)
+
+  04 May 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.28.10.ebuild, -clip-kernel-2.6.28.9-r2.ebuild:
+  Bump to latest. Smallish patch fix in vserver+grsec patch, otherwise
+  everything unchanged.
+
+*clip-kernel-2.6.28.9-r2 (30 Apr 2009)
+
+  30 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.28.9-r2.ebuild, -clip-kernel-2.6.28.9-r1.ebuild:
+  Bump clip-patches - fix anon_inodes readonly.
+  Bump clip-lsm - fix compilation without clip-lsm.
+
+*clip-kernel-2.6.28.9 (22 Apr 2009)
+
+  22 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.28.9.ebuild, -clip-kernel-2.6.22.24-r25.ebuild,
+  +files/squashfs-3.4.patch, +files/8139cp.c-2.6.28.9,
+  +files/config-2.6.28.9.devstation, +files/config-2.6.28.9.livecd,
+  +files/config-2.6.28.9.modular, +files/config-2.6.28.9.modular-smp,
+  -files/8139cp.c-2.6.22.24, -files/chlog-op,
+  -files/config-2.6.22.19-r10.client, -files/config-2.6.22.19-r10.devstation,
+  -files/config-2.6.22.19-r10.gtw, -files/config-2.6.22.19-r10.livecd,
+  -files/config-2.6.22.19-r10.modular, -files/config-2.6.22.19-r10.modular-smp,
+  -files/squashfs-3.2-r2.patch:
+  First try at a bump to 2.6.28. Works OK, but not tested extensively.
+  Fully static configurations removed. 
+
+  02 Apr 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/mkinitrd.clip, files/config-2.6.22.19-r10-modular,
+  files/config-2.6.22.19-r10-modular-smp:
+  Make CONFIG_BLK_DEV_MD a static option in modular kernels. 
+  This is needed to be able to rescan RAID arrays in initrd.
+  Adapt mkinitrd to be able to build support for RAID arrays
+  in initrd, when the keyword RAID is present in /etc/modules.
+
+*clip-kernel-2.6.22.24-r25 (23 Mar 2009)
+
+  23 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r25.ebuild, -clip-kernel-2.6.22.24-r24.ebuild:
+  Bump clip-patches, fix a miscompilation with gcc4.
+
+*clip-kernel-2.6.22.24-r24 (09 Mar 2009)
+
+  09 Mar 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r24.ebuild, -clip-kernel-2.6.22.24-r23.ebuild:
+  -files/config-2.6.22.19-r9*, +files/config-2.6.22.19-r10*:
+  Add sound modules to modular configs.
+
+  03 Feb 2009; Olivier Levillain <clipos@ssi.gouv.fr>
+  files/config-2.6.22.19-r9.livecd:
+  Fix config-livecd : add PAX_REFCOUNT option.
+ 
+*clip-kernel-2.6.22.24-r23 (22 Jan 2009)
+
+  22 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r23.ebuild, -clip-kernel-2.6.22.24-r22.ebuild,
+  files/config-2.6.22.19-r9.devstation:
+  Bump CLSM: allow any process to lower its own io scheduling class to
+  idle.
+  Fix config-devstation : add PAX_REFCOUNT option.
+
+*clip-kernel-2.6.22.24-r22 (13 Jan 2009)
+
+  13 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r22.ebuild, -clip-kernel-2.6.22.24-r21.ebuild,
+  -files/config-2.6.22.19-r8.*, +files/config/2.6.22.19-r9.*,
+  files/mkinitrd, files/_debian/postinst, files/_debian/prerm:
+  Bump configs to : 
+   - add CONFIG_XFRM_USER, needed by strongswan
+   - Modify modular configs to :
+    - include a modular CLIP-LSM 
+    - remove builtin BLK_DEV_IDE and IDE-GENERIC, that conflict with some 
+      SATA modules, e.g. ATA_PIIX, make them modules instead
+    - add miscellaneous modules : SCSI disks, PCMCIA/USB NICs, NTFS
+  Bump CLIP LSM to fix modular compilation.
+
+*clip-kernel-2.6.22.24-r21 (12 Jan 2009)
+
+  12 Jan 2009; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r21.ebuild, -clip-kernel-2.6.22.24-r20.ebuild,
+  -files/config-2.6.22.19-r7.*, +files/config/2.6.22.19-r8.*:
+  Bump configs to remove CONFIG_PRINTK_TIME in clients, which breaks 
+  syslog filters.
+
+*clip-kernel-2.6.22.24-r20 (10 Dec 2008)
+
+  10 Dec 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r20.ebuild, -clip-kernel-2.6.22.24-r19.ebuild:
+  Bump CLSM to -r10 : control oom adjust through /proc/<pid>/oom_adj
+  on IMMORTAL tasks.
+
+*clip-kernel-2.6.22.24-r19 (08 Dec 2008)
+
+  08 Dec 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r19.ebuild, -clip-kernel-2.6.22.24-r18.ebuild:
+  CLSM: check xids on sigio control.
+
+*clip-kernel-2.6.22.24-r18 (05 Dec 2008)
+
+  05 Dec 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r18.ebuild, -clip-kernel-2.6.22.24-r17.ebuild:
+  Bump clip-patches to fix CVE-2008-5182 (inotify race condition).
+
+*clip-kernel-2.6.22.24-r17 (04 Dec 2008)
+
+  04 Dec 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r17.ebuild, -clip-kernel-2.6.22.24-r16.ebuild:
+  * CLIP-LSM :
+    - make it build again as a module (#468)
+    - smallish complement to the doxygen documentation
+
+  25 Nov 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config/2.6.22.19-r7.*:
+  Temporarily disable PAX_REFCOUNT until we can investigate further.
+
+*clip-kernel-2.6.22.24-r16 (25 Nov 2008)
+
+  25 Nov 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r16.ebuild, -clip-kernel-2.6.22.24-r15.ebuild,
+  -files/config-2.6.22.19-r6.*, +files/config/2.6.22.19-r7.*:
+  Bump clip-patches to: 
+   - reorganize patches (#451)
+   - add a patch to fix a potential sysctl ownership issue (#452)
+   - add a backport of PAX_REFCOUNT (#454)
+  Bump configs to:
+   - activate PAX_REFCOUNT
+   - remove IPCOMP, AH, NAT_FTP and CONNTRACK_FTP, and add HPET timer (#453)
+
+*clip-kernel-2.6.22.24-r15 (24 Oct 2008)
+
+  24 Oct 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r15.ebuild, -clip-kernel-2.6.22.24-r14.ebuild:
+  Bump clip-patches, to fix splice() bypassing O_APPEND.
+
+*clip-kernel-2.6.22.24-r14 (08 Oct 2008)
+
+  08 Oct 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r14.ebuild, -clip-kernel-2.6.22.24-r13.ebuild,
+  -files/config-2.6.22.19-r5.*, +files/config/2.6.22.19-r6.*:
+  Bump clip-patches, add a 'NO_SP' vserver network context flag, that,
+  when absent, prevent any network traffic to and from the context without
+  a matching IPsec SP.
+  Bump clip-lsm, add a 'CLSM_PRIV_XFRMSA' and 'CLSM_PRIV_XFRMSP' privileges,
+  controlling access to the SPD/SAD.
+  Bump configs :
+   - add 'advanced router' + 'verbose routing' to get logging for martian
+   packets
+   - add CONFIG_SECURITY_NETWORK_XFRM, to enable the new CLSM SPD/SAD hooks.
+
+*clip-kernel-2.6.22.24-r13 (03 Oct 2008)
+
+  03 Oct 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r13.ebuild, -clip-kernel-2.6.22.24-r12.ebuild:
+  Bump clip-lsm :
+   - CLSM_PRIV_PROCFD now enables access to /proc/<pid>/maps as well
+   - More verbose warnings, including the context and in some cases
+   current *id.
+   - Fix doxygen documentation
+   - More sensible LSM interface add-ons.
+
+*clip-kernel-2.6.22.24-r12 (17 Sep 2008)
+
+  17 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r12.ebuild, -clip-kernel-2.6.22.24-r11.ebuild:
+  Bump clip-patches to fix CVE-2008-3534 (possible BUG() in
+  shmem_delete_inode())
+
+*clip-kernel-2.6.22.24-r11 (09 Sep 2008)
+
+  09 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r11.ebuild, -clip-kernel-2.6.22.24-r10.ebuild:
+  Bump. Fixes CVE-2007-6282 (IPsec DoS when first ESP frag is smaller than
+  header + IV).
+
+*clip-kernel-2.6.22.24-r10 (05 Sep 2008)
+
+  05 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r10.ebuild, -clip-kernel-2.6.22.24-r9.ebuild:
+  Bump clip-patches, add a patch to terminate the whole thread group,
+  rather than just the faulting thread, when a PaX violation is 
+  detected.
+
+*clip-kernel-2.6.22.24-r9 (03 Sep 2008)
+
+  03 Sep 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r9.ebuild, -clip-kernel-2.6.22.24-r8.ebuild:
+  Bump clip-patches, to fix CVE-2008-3275.
+
+*clip-kernel-2.6.22.24-r6 (17 Jul 2008)
+
+  17 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r6.ebuild, -clip-kernel-2.6.22.24-r5.ebuild,
+  -files/config-2.6.22.19-r3.client, -files/config-2.6.22.19-r3.client.livecd,
+  -files/config-2.6.22.19-r3.modular-smp, -files/config-2.6.22.19-r3.gtw,
+  -files/config-2.6.22.19-r3.modular, -files/config-2.6.22.19-r3.gtw.livecd,
+  +files/config-2.6.22.19-r4.client, +files/config-2.6.22.19-r4.client.livecd,
+  +files/config-2.6.22.19-r4.modular-smp, +files/config-2.6.22.19-r4.gtw,
+  +files/config-2.6.22.19-r4.modular, +files/config-2.6.22.19-r4.gtw.livecd:
+  Remove GRKERNSEC_CHROOT_{MKNOD,MOUNT} from configs, since they play havoc 
+  with maintainer-scripts during core update (which is run chrooted).
+
+*clip-kernel-2.6.22.24-r5 (09 Jul 2008)
+
+  09 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r5.ebuild, -clip-kernel-2.6.22.24-r4.ebuild:
+  Bump clip-patches. Add UDP source port randomization, backported
+  from 2.6.22.24.
+
+*clip-kernel-2.6.22.24-r4 (07 Jul 2008)
+
+  07 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r4.ebuild, -clip-kernel-2.6.22.24-r3.ebuild:
+  Deny opening the kernel log buffer with CLSM_PRIV_KSYSLOG and not 
+  CAP_SYS_ADMIN. Other operations (read, etc) remain possible. This 
+  prevents someone starving the legitimate (launched before
+  CAP_SYS_ADMIN is masked) syslog-ng's access to kmsg with a second, 
+  parasitic syslog.
+
+*clip-kernel-2.6.22.24-r3 (03 Jul 2008)
+
+  03 Jul 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r3.ebuild, -clip-kernel-2.6.22.24-r2.ebuild,
+  -files/clsm-2.6.22.24-r1.patch, +files/clsm-2.6.22.24-r2.patch:
+  Fix CLSM_PRIV_IMMORTAL management, that had somehow been reverted to 
+  the old version (only init can kill). Really allow ADMIN context 
+  processes to kill those from any other context.
+
+*clip-kernel-2.6.22.24-r2 (24 Jun 2008)
+
+  24 Jun 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24-r2.ebuild, -clip-kernel-2.6.22.24-r1.ebuild,
+  -files/clsm-2.6.22.24.patch, +files/clsm-2.6.22.24-r1.patch:
+  Bump CLIP-LSM (mostly doxygen stuff - now complete).
+  Bump clip-patches (misc security patches from 2.6.25 branch).
+
+*clip-kernel-2.6.22.24 (13 May 2008)
+
+  13 May 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.24.ebuild, -clip-kernel-2.6.22.19-r9.ebuild:
+  +files/8139cp.c-2.6.22.24, -files/8139cp.c-2.6.22.19,
+  +files/chlog-op/ : 
+  Bump to Oliver Pinter's 2.6.22.y stable branch (from
+  http://repo.or.cz/w/linux-2.6.22.y-op.git), to fix a few security 
+  issues (e.g. races in inotify). OP's changelogs added in files/.
+
+*clip-kernel-2.6.22.19-r9 (24 Apr 2008)
+
+  24 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r9.ebuild, -clip-kernel-2.6.22.19-r8.ebuild,
+  -files/clsm-2.6.22.19-r2.patch, +files/clsm-2.6.22.19-r3.patch:
+  Bump CLIP-LSM : 
+   - add default check to devctl non-strict mode : a new mount whose
+   device is not in the devctl base is only authorized if it has the
+   nosuid,nodev,noexec flags.
+   - add pivot_root / move mount checks : those are only allowed to init,
+   once CLSM_MOUNT is active
+   - fix grsec_chroot.c task_is_active() when CONFIG_CLSM_CHROOT is not
+   selected
+
+*clip-kernel-2.6.22.19-r8 (23 Apr 2008)
+
+  23 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r8.ebuild, -clip-kernel-2.6.22.19-r7.ebuild,
+  +files/_debian/prerm, +files/_debian/postinst:
+  Add a prerm to copy the kernel to vmlinuz-clip-old when removing 
+  the package, to leave a copy for the 'previous' CLIP install, and
+  do the same with the initrd if it exists.
+  Add a postinst to create those copies on the first install.
+
+*clip-kernel-2.6.22.19-r7 (21 Apr 2008)
+
+  21 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r7.ebuild, -clip-kernel-2.6.22.19-r6.ebuild:
+  Remove CONFIG_CLSM_CHROOT_PTRACE, which plays havoc with java and is
+  not really needed now that we have a working GRSEC_CHROOT_FINDTASK.
+
+*clip-kernel-2.6.22.19-r6 (02 Apr 2008)
+
+  02 Apr 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r6.ebuild, -clip-kernel-2.6.22.19-r5.ebuild,
+  -files/config-2.6.22.19.*, +files/config-2.6.22.19-r1.*:
+  Fix PE2900 config : add SMP, fix NAT, remove IDE support, remove
+  CLSM/VERIEXEC debug, add USB EHCI add logo :)
+  Add FUSION_MPT modules to modular configs.
+
+*clip-kernel-2.6.22.19-r5 (28 Mar 2008)
+
+  28 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r5.ebuild, -clip-kernel-2.6.22.19-r4.ebuild,
+  -files/clsm-2.6.22.19-r1.patch, +files/clsm-2.6.22.19-r2.patch:
+  Bump CLIP-LSM : fix CLSM_FLAG_KTHREAD propagation, and CLSM_PRIV_PROCFD
+  management. Add socket families to socket operations logging.
+
+*clip-kernel-2.6.22.19-r4 (25 Mar 2008)
+
+  25 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r4.ebuild, -clip-kernel-2.6.22.19-r3.ebuild,
+  -files/clsm-2.6.22.19.patch, +files/clsm-2.6.22.19-r1.patch:
+  CLIP-LSM: fix clsm_ptrace : this is normally called with 
+  current->task_lock held, thus we shouldn't call get_task_comm() from
+  it.
+  clip-patches: remove redundant call to security_task_lock() in
+  fs/proc/base.c, which is done without holding task_lock, and therefore
+  hid the previous bug up till now.
+
+*clip-kernel-2.6.22.19-r1 (05 Mar 2008)
+
+  05 Mar 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19-r1.ebuild, -clip-kernel-2.6.22.19.ebuild:
+  Bump clip-patches to add support for a O_MAYEXEC flag on sys_open(),
+  to allow interpreters to check exec permissions (mount options only, not 
+  file perms) on files they open.
+ 
+*clip-kernel-2.6.22.19 (29 Feb 2008)
+
+  29 Feb 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.19.ebuild, -clip-kernel-2.6.22.18.ebuild,
+  -files/8139cp.c-2.6.22.18, +files/8139cp.c-2.6.22.19, 
+  -files/clsm-2.6.22.17.patch, -files/clsm-2.6.22.18.patch,
+  -files/config-2.6.22.17*, +files/config-2.6.22.19*:
+  Bump to 2.6.22.19 to fix some CVEs (bug #141). Add some complements
+  for grsec (bug #140), through clip-patches and configuration. Re-added
+  most GRKERNSEC_CHROOT_*, disabled ELF TEXTREL support in PaX.
+
+*clip-kernel-2.6.22.18 (11 Feb 2008)
+
+  11 Feb 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.18.ebuild, -clip-kernel-2.6.22.17.ebuild,
+  -files/8139cp.c-2.6.22.17, +files/8139cp.c-2.6.22.18:
+  Bump to .18 to fix remaining vmsplice() bugs (CVE-2008-0009, 
+  CVE-2008-0010, AFAIK). All patches and configs left as is.
+
+*clip-kernel-2.6.22.17 (07 Feb 2008)
+
+  07 Feb 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.17.ebuild, -clip-kernel-2.6.22.16-r1.ebuild,
+  +files/config-2.6.22.17.modular-smp, -files/config-2.6.22.14.modular,
+  +files/config-2.6.22.17.gtw, +files/config-2.6.22.17.modular,
+  -files/8139cp.c-2.6.22.16, +files/8139cp.c-2.6.22.17,
+  -files/clsm-2.6.22.14-r1.patch, -files/config-2.6.22.14.client,
+  +files/digest-clip-kernel-2.6.22.17, +files/config-2.6.22.17.client,
+  +files/clsm-2.6.22.17.patch, -files/digest-clip-kernel-2.6.22.16-r1,
+  -files/config-2.6.22.14.modular-smp, -files/config-2.6.22.14.gtw:
+  Bump to 2.6.22.17, to fix CVE-2007-6206 and CVE-2008-0007. New CLIP-LSM
+  flag : CLSM_FLAG_MIGRATED, to identify tasks that have migrated into 
+  a vserver context and hasn't called exec() since then. Reworked management
+  of CLSM_PRIV_IMMORTAL in CLIP-LSM : IMMORTAL tasks can now be signaled 
+  by anyone with CAP_SYS_BOOT in their inheritable set, which is tailored
+  specifically to allow stopping those tasks during CLIP's shutdown sequence.
+  Clip-patches updated to include vserver-2.2.0.6, and take 'fake-init'
+  processes into account when doing a 'kill -1' in a vserver context. The
+  fake-init of that context can no longer be signaled by such a call, except
+  when the caller has CLSM_FLAG_MIGRATED (which allows vsctl XXX stop).
+  8139cp.c file is simply renamed without changes.
+  Updated configs to remove PaX SEGMEXEC, and add instead PAGEEXEC + X86_PAE,
+  which allows the use of the NX/XD flag for PAGEEXEC when the CPU supports
+  it. Thus we get rid of the SEGMEXEC vma mirroring stuff, which I always
+  found a bit too complicated to be really bug-free...
+  
+  
+*clip-kernel-2.6.22.16-r1 (16 Jan 2008)
+
+  16 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.16-r1.ebuild, -clip-kernel-2.6.22.16.ebuild,
+  Remove vserver / grsec localversions to avoid issues with 
+  modular configs.
+
+*clip-kernel-2.6.22.16 (15 Jan 2008)
+
+  15 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.16.ebuild, -clip-kernel-2.6.22.15.ebuild,
+  +files/8139cp.c-2.6.22.16, -files/8139cp.c-2.6.22.15:
+  Bump to 2.6.22.16 : security fix for CVE-2008-0001 (bug #119).
+
+*clip-kernel-2.6.22.15 (14 Jan 2008)
+
+  14 Jan 2008; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.15.ebuild, -clip-kernel-2.6.22.14-r2.ebuild,
+  +files/8139cp.c-2.6.22.15, -files/8139cp.c-2.6.22.14:
+  Bump to 2.6.22.15. Bug #118.
+
+*clip-kernel-2.6.22.14-r2 (17 Dec 2007)
+
+  17 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.14-r2.ebuild, +files/clsm-2.6.22.14-r1.patch,
+  -clip-kernel-2.6.22.14-r1.ebuild, -clip-kernel-2.6.19.7-r18.ebuild,
+  -files/*2.6.19*, -files/clsm-2.6.22.14.patch:
+  Bump CLIP-LSM and clip-patches. Remove 2.6.19* ebuild.
+  CLIP-LSM: 
+    - limit fd checks on UNIX receive_file() to directories
+    - define the LSM sysctl() hook to prevent any write access
+      to kernel tunables from a non-ADMIN context.
+    - fix some warnings due to prototype changes in the LSM hooks.
+  Clip-patches:
+    - move VESAFB patch into the 'arch' category
+    - add a new security patch to mount the anon_inode FS as READONLY,
+    NOATIME and NOLOCK, and make the anonymous inode IMMUTABLE, to remove
+    an inter-context communication channel based on common access to this 
+    inode. NB : this does not affect -2.6.19.7.
+
+
+*clip-kernel-2.6.22.14-r1 (12 Dec 2007)
+
+  12 Dec 2007; Olivier Levillain <clipos@ssi.gouv.fr>
+  -clip-kernel-2.6.22.14.ebuild +clip-kernel-2.6.22.14-r1:
+  Add an install source only feature with "use clip-devstation".
+  
+  12 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.22.14.client:
+  Remove leftover GRKERNSEC_SYSCTL. Bug #106.
+  
+*clip-kernel-2.6.22.14 (04 Dec 2007)
+
+  04 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.22.14.ebuild, +files/config-2.6.22.14.modular,
+  +files/config-2.6.22.14.client, +files/config-2.6.22.14.gtw,
+  +files/config-2.6.22.14.modular-smp,
+  +files/clsm-2.6.22.14.patch, +files/kcssd-2.6.22.patch,
+  +files/8139cp.c-2.6.22.14,
+  -clip-kernel-2.6.21.6-r1.ebuild, -files/clsm-2.6.21.6-r1, 
+  -files/config-2.6.21.6-r1:
+  Experimental bump to 2.6.22. Configs are the same as 2.6.19.7-r18,
+  except for intelfb which is removed from the client (d520) config,
+  CLIP LSM is the same feature-wise as for 2.6.19.7, miscellaneous
+  clip patches are the same except for a new one to make vesafb work
+  without CONFIG_MODULES. 8139cp.c is basically the same, with 2.6.19 -> 2.6.22
+  diffs to the original driver applied, and deprecated symbols replaced with
+  their up-to-date equivalents.
+
+  04 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/mkinitrd.clip:
+  Remove leftover 'KERNEL_VER'...
+
+*clip-kernel-2.6.19.7-r18 (03 Dec 2007)
+
+  03 Dec 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r18.ebuild, +files/config-2.6.19.7-r18.modular,
+  +files/config-2.6.19.7-r18.client, +files/config-2.6.19.7-r18.gtw,
+  +files/config-2.6.19.7-r18.modular-smp,
+  -clip-kernel-2.6.19.7-r17.ebuild, -files/config-2.6.19.7-r16.*,
+  files/mkinitrd.clip:
+  Split the modular config into a SMP one and a non-SMP one. Add Firmware
+  EDID and MTRR support to modular configs (needed for some framebuffers).
+  Add support for module options in /etc/modules : anything added after the 
+  name of the module is passed as is on the insmod command line.
+
+  07 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  Remove all stale ebuilds before 2.7.19.7-r17. 2.6.21.6-r1 kept
+  until we re-bump over 2.6.19.
+
+  06 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.19.7-r17.ebuild:
+  Add virtual/kernel as conflict and PROVIDE for non virtual 
+  clip-kernel instances, to generate automatic conflicts between 
+  those.
+  
+*clip-kernel-2.6.19.7-r17 (05 Nov 2007)
+
+  05 Nov 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r17.ebuild, +files/config-2.6.19.7-r16.modular,
+  files/config-2.6.19.7-r16.client, +files/mkinitrd.clip:
+  Added support for modular kernel, to deal with miscellaneous platform
+  that cannot be supported through a dedicated static kernel. Removed 
+  IUSE clip-eads and IUSE clip-sgdn, only the laptop client and the gtw
+  are maintained as dedicated configs.
+  The modular kernel is compiled for a generic x86-SMP target, and contains 
+  only the most basic drivers. Modules are compiled for all types of IDE/SATA
+  controllers, 10/100/1000 NICs, and USB controllers. Several conntrack
+  modules are also included in case they might be needed for specific
+  applications. An initramfs image is generated at boot-time, to load those 
+  modules that are defined in a /etc/modules file (and their dependencies) 
+  at boot time. Once those modules are loaded, the
+  kernel.grsecurity.disable_modules tunable is activated before switching to
+  the real root, to prevent any module operation until we drop CAP_SYS_MODULE 
+  alltogether.
+  Also added a 'clip-virtual' USE flag that turns this into a virtual package, 
+  depending on any of several clip-kernel-<suf> packages with the same
+  version, where <suf> is DEB_NAME_SUFFIX used to designate the supported 
+  platforms - this allows us to have different kernel packages for different 
+  platforms in the same repository, without breaking dependency tracking 
+  for userland. Keeping the virtual package as a version of the original
+  rather than a dedicated virtual/kernel package might seem ugly, but it makes
+  sure the virtual and the kernel proper are kept in sync.
+
+  19 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.19.7-r16.client:
+  Add missing SCSI cdrom driver.
+  
+*clip-kernel-2.6.19.7-r16 (02 Oct 2007)
+
+  02 Oct 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r16.ebuild, +files/8139cp.c-2.6.19.7,
+  +files/config-2.6.19.7-r16.{sgdn,eads,client,gtw}:
+  Imported changes from EADS's 2.6.19.7-r10, which the changelog quoted below.
+  Configs for 'eads' and 'gtw' are the EADS ones with the new clsm options. The
+  config for client was regenerated based on the SGDN -r15 one, and the 'sgdn'
+  config is the client config with Pentium4, IDE disk and E1000 support added.
+  Also add NOSYMFOLLOW mount option.
+
+*clip-kernel-2.6.19.7-r10 (27 Jul 2007)
+
+  27 Jul 2007; EADS D&S <clipos@ssi.gouv.fr>
+  +files/8139cp.c-2.6.19.7,+files/config-2.6.19.7-r10.eads:
+  Added AT2801FX driver.
+  Added config file for EADS HP test PC
+  Modified config files for client and gtw
+  Suppress MOUNTABLE flag check for ext2 filesystem
+
+  06 Jul 2007; EADS D&S <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r10.ebuild: same as -r9 with config choices and flag
+  clip-devel option corrected
+  +files/config-2.6.19.7-r10.sgdn: same as -r9, used if flag clip-sgdn
+  set
+  +files/config-2.6.19.7-r10.client: used otherwise
+  +files/config-2.6.19.7-r10.gtw: used if flag clip-gtw set
+  +files/config-2.6.18-hardened.gtw : linked by previous file
+  note : this is symbolic link cause gateway kernel not yet
+  built with same kernel version as other clip products
+
+*clip-kernel-2.6.19.7-r15 (18 Sep 2007)
+
+  18 Sep 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r15.ebuild, +files/clsm-2.6.19.7-r15.patch,
+  +files/config-2.6.19.7-r15:
+  Add support for a MS_NOLOCK mount option, that prevents creating 
+  any lock on the files of a vfsmount. This will allow us to block
+  a covert channel between RM_H and RM_B (send info by creating locks
+  on e.g. /etc/core/passwd in RM_H, read those locks in RM_B).
+  MS_NOLOCK also blocks inotify_add_watch calls on the mount's files,
+  which would create another covert channel on shared mounts. 
+  Add CONFIG_INOTIFY, now that it doesn't create a covert channel.
+
+*clip-kernel-2.6.19.7-r14 (14 Sep 2007)
+
+  14 Sep 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r14.ebuild, +files/clsm-2.6.19.7-r14.patch:
+  Fix swapoff when using devctl : open the swap device without any
+  permissions in the sys_swapoff path, so we can still swapoff a 
+  device with a null devctl permission mask.
+  Prevent swapon when kernel.clip.mount == 0, so that devctl access
+  control on the legitimate swap device cannot be 'trivially' 
+  bypassed by adding a second swapfile (would require CAP_SYS_ADMIN,
+  anyway, but you never know...).
+
+*clip-kernel-2.6.19.7-r13 (30 Aug 2007)
+
+  30 Aug 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r13.ebuild, +files/clsm-2.6.19.7-r13.patch,
+  Bump: two SMP fixes for clsm.
+    - do not try to get_task_comm on a target task when logging 
+    an access deny, this is not lock safe
+    - remove useless and potentially dangerous task_lock(current)
+    in the CHROOT_FIND_TASK hook - I shouldn't have added it in the
+    first place.
+
+*clip-kernel-2.6.19.7-r12 (28 Aug 2007)
+
+  28 Aug 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r12.ebuild, +files/config-2.6.19.7-r12.patch,
+  Bump config to add acpi/USB EHCI and remove a few other things : IDE
+  IRQ sharing, MTRR, vserver inode tagging.
+
+*clip-kernel-2.6.19.7-r11 (21 Aug 2007)
+
+  21 Aug 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r11.ebuild, +files/clsm-2.6.19.7-r11.patch,
+  +files/config-2.6.19.7-r11:
+  Add new devctl subsystem to provide a block device protection scheme 
+  that is more configurable than the ro_major/ro_minor sysctl stuff.
+  Also merge pdeath_signal fix from linux-2.6.22.4.
+
+*clip-kernel-2.6.21.6-r1 (27 Jul 2007)
+
+  21 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.21.6-r1.ebuild, +files/clsm-2.6.21.6-r1.patch,
+  +files/config-2.6.21.6-r1:
+  Pretty big bump. 
+    - fixed race condition with mmap/mprotect(PROT_EXEC). Since 
+    MAP_DENYWRITE is silently ignored when requested by userland,
+    it is now added by hand in the mmap/mprotect code for PROT_EXEC
+    mappings, with all writes denied before performing a veriexec
+    verification (and a verification failure if writes cannot be
+    denied). Conversely, to avoid possible DoS on writable files,
+    PROT_EXEC mappings now require the underlying file, if any, to
+    be executable by the current user. This means shared libs 
+    *really* need to be marked a+x.
+    - proper caching implementation, synchronized with 
+    inode->i_writecount to avoid race conditions.
+    - fixed bug in clsm_task_is_chrooted : this can be called with
+    a NULL current->security. Combined with a smallish fix for 
+    /proc/self in fs/proc/base.c, this makes GRSEC_CHROOT_FINDTASK
+    usable with CLIP. Yeepee! (It is now activated in config).
+    - smallish CONFIG_CLSM_NOSUID_ROOT option, to prevent root 's' 
+    bits specifically. Veriexec is always preferable in such a case.
+    - new CONFIG_CLSM_NET_FULL option, to check every sendmsg/recvmsg(),
+    as an effective counter-measure to remote shell spawning from a
+    compromised process with network access.
+    - removed the clsm_sb_kern_mount and all the S_IUNLINK magic for
+    ext2 partitions. It is kludgy, no longer necessary, and it is a 
+    pain in the *** for local administration.
+    - new non-clsm patch to prevent /proc/<tgid>/vinfo and ninfo from
+    being visible (but not readable) in a VXF_HIDE_VINFO context.
+  All in all, this seems stable enough. Marking it ~x86.
+    
+*clip-kernel-2.6.21.6 (13 Jul 2007)
+
+  13 Jul 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.21.6.ebuild, +files/clsm-2.6.21.6.patch,
+  +files/config-2.6.21.6:
+  New port to 2.6.21.6. Cosmetic update for vserver+grsec patch.
+  Added experimental veriexec verification caching scheme. 
+  Better management of DEVEL options in config.
+  Removed IUSE clip-lsm.
+  Still marked ~x86.
+  Plus, bumping the kernel on Friday, 13th sounded like fun :)
+  
+*clip-kernel-2.6.21.5 (26 Jun 2007)
+
+  26 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.21.5.ebuild, +files/clsm-2.6.21.5.patch,
+  +files/config-2.6.21.5:
+  Experimental port to 2.6.21.5. For the most part, same versions
+  of vserver/grsec/clsm (small crypto API migration for clsm, but
+  same features exactly). Somewhat leaner config. Just for testing,
+  for now => ~x86.
+  
+*clip-kernel-2.6.19.7-r9 (11 Jun 2007)
+
+  11 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r9.ebuild, +files/clsm-2.6.19.7-r9.patch,
+  +files/config-2.6.19.7-r9:
+  Bump, new CLSM privs and new clip-patches (added patch to allow
+  init to kill any process on the system, regardless of context 
+  boundaries). Made it possible to disabled SCRIPT_MODE in veriexec
+  through a config option, SCRIPT_MODE is now disabled by default in
+  CLIP kernels. Also new in CLSM is a new way of managing locked
+  block devices : we now only protect one major number and a range
+  of minors for that major. This works just as well to protect the
+  root disk, and does not prevent access to removable media as the
+  old way used to do. 
+  
+*clip-kernel-2.6.19.7-r8 (07 Jun 2007)
+
+  07 Jun 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r8.ebuild, +files/clsm-2.6.19.7-r8.patch:
+  Smallish bump, fix level setting permission in veriexec so
+  we can start / restart rm_X after reducecap.
+
+*clip-kernel-2.6.19.7-r7 (30 May 2007)
+
+  30 May 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r7.ebuild, +files/config-2.6.19.7-r7,
+  +files/clsm-2.6.19.7-r7.patch:
+  Bump, add CLSM_PRIV_KSYSLOG and VERIEXEC_FLAG_CHECKLIBS.
+  Remove EI_PAX_FLAGS from config, since openoffice-bin now 
+  uses PT_PAX_FLAGS. Set PAX_ACL to 'none' since it is not used.
+
+*clip-kernel-2.6.19.7-r6 (10 May 2007)
+
+  10 May 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r6.ebuild, +files/config-2.6.19.7-r6,
+  +files/clsm-2.6.19.7-r6.patch:
+  Bump clsm : 
+   - yet finer logic in ptrace/kill/nice : take clsm root privs
+   into account.
+   - new clsm privs : NETLINK and RECVSIG.
+   - better Kconfig logic.
+   - new chroot control : fds over unix sockets
+   - block special file access control : do not allow writing to 
+   'raw' block devices, nor device-mapping them with write access.
+
+*clip-kernel-2.6.19.7-r5 (03 May 2007)
+
+  03 May 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r5.ebuild, +files/config-2.6.19.7-r5,
+  +files/clsm-2.6.19.7-r5.patch:
+  Bump clsm : 
+    - better logic in ptrace/kill/nice hooks
+    - added fowner/sigio file hooks, so we can control signals
+    that may be sent to another task through fcntl(..., F_SETOWN, ...)
+    commands (with the same logic as for kill)
+    - added sb_mount/sb_kern_mount hooks, which enable checks on
+    mounts/remounts, with the following being implemented at this
+    point:
+     - do not allow dropping restrictive flags on remount, i.e.
+     no ro->rw, or nodev->dev (and so forth) transition
+     - do not allow new mounts other than bind,tmpfs,proc,devpts,
+     vfat/isofs (for removable media), and ext2 with the S_IUNLINK
+     flag on the root inode. That way, we allow mounting user 
+     volumes (which are now created with said flag), but not any
+     other on-disk partition other than those mounted at boot. 
+    These mount checks apply regardless of capabilities, and are 
+    enabled through the new kernel.clip.mount sysctl. Note that 
+    current config keeps the 'DEVEL' option for those checks, 
+    enabling root to disable them, but a final version should 
+    drop that option and have the sysctl work one-way only.
+    TODO: control access to /dev/[hs]dX block devices, so we
+    can prevent any modification of those on-disk partitions.
+
+*clip-kernel-2.6.19.7-r4 (17 Apr 2007)
+
+  11 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r4.ebuild, +files/config-2.6.19.7-r4:
+  Bumped vserver patch to final 2.2.0, bump up grsec to 20070402.
+  Config changes : remove some useless grsec chroot checks (which
+  are already controlled through caps), and GRKERNSEC_DMESG (with
+  which we would need to give CAP_SYS_ADMIN to syslog, yuck). 
+  Added PAX_UDEREF, which seems to be working better now (or more 
+  probably, the kernel itself has been fixed at some point :)
+  
+*clip-kernel-2.6.19.7-r3 (11 Apr 2007)
+
+  11 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r3.ebuild, +files/clsm-2.6.19.7-r3:
+  Bump clsm patch : 
+   - remove veriexec ccap since I already got rid of it everywhere
+   else
+   - do not drop CLSM network privs when setuid()ing from root to
+   non-root : this breaks racoon.
+  Reuse older config, since it hasn't changed.
+  
+*clip-kernel-2.6.19.7-r2 (10 Apr 2007)
+
+  10 Apr 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r2.ebuild, +files/config-2.6.19.7-r2,
+  +clsm-2.6.19.7-r2.patch:
+  BIG overhaul of clsm code. 
+    - removed veriexec ctx flags, everything is done through 
+    levels (IMMUTABLE) or a static update context number (DELEGATE)
+    - new SETUPDATE ioctl to setup this update context number
+    - context level / capset change is only allowed from ADMIN ctx
+    - generalized clsm_priv checks for privileged operations
+    - removed veriexec ccap checks (the ccap itself is left in
+    there to ease the transition)
+    - allow setting the initial context level when creating a
+    new context
+    - removed devlock stuff, replaced by checks on a file's VFS mount
+    ro flags when creating/deleting an entry. Such checks are 
+    controlled through the context's level.
+    - new CLSM priv : CLSM_PRIV_SIGUSR allows sending SIGUSR{1,2} back
+    to xid 0 from xid != 0
+      => this is needed by Xorg when running in a non-zero context, to
+      send SIGUSR back to XDM to signal it that Xserver is set up
+    - new CLSM priv : CLSM_PRIV_NETOTHER allows creating a network 
+    socket, but not connecting or binding it (useful for sockopts-only
+    sockets, as in ifconfig / iptables)
+    - extended CLSM network hooks to connection-less UDP sendmsg.
+    - allow ADMIN ctx to send signals to non admin ctx. This is need
+    for VT commutation when Xorg is running in a non-zero ctx, and
+    might also help with killing some contexts.
+
+  27 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.19.7-r1:
+  Add support for legacy EI_PAX flags, so we can use a binary 
+  openoffice.org, since I'm too lazy to rebuild one with proper
+  PT_PAX flags.
+  
+*clip-kernel-2.6.19.7-r1 (26 Mar 2007)
+
+  26 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7-r1.ebuild, +files/config-2.6.19.7-r1, 
+  +files/clsm-2.6.19.7-r1.patch:
+  Bump clip-lsm code, adds networking hooks (not enabled at boot 
+  for now).
+    - new CLSM priv : CLSM_PRIV_VERICTL, needed for veriexec admin 
+    in an active context (non zero)
+    - new CLSM priv : CLSM_PRIV_NETCLIENT allows connecting to the network
+    - new CLSM priv : CLSM_PRIV_NETSERVER allows bind()ing and accept()ing
+    network connections
+    - new CLSM priv : CLSM_PRIV_PROCFD allows accessing /proc/<pid>/fd/*
+    for processes belonging to another user, without CAP_SYS_PTRACE 
+    which is otherwise required for this on 2.6.19+
+      => needed by fuser when unmounting users's encrypted homes
+  
+*clip-kernel-2.6.19.7 (21 Mar 2007)
+
+  21 Mar 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.19.7.ebuild, +files/config-2.6.19.7, 
+  +files/clsm-2.6.19.7.patch:
+  Little spring-time gift : bump to 2.6.19 branch. Fix the by-now
+  infamous 'expand_stack()' PaX bug, switch to 2.2 vserver branch,
+  leaner config (no sched_hard support). Big performance improvement,
+  maybe due to us being able to use VDSO now that it's properly 
+  randomized.
+  TODO : check all, update doc.
+  
+*clip-kernel-2.6.17.14-r1 (29 Jan 2007)
+
+  29 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.17.14-r1.ebuild, +files/config-2.6.17.14-r1:
+  Bumped up patches : remove useless grsec self/maps stuff, add
+  'fix' for unix sockets not respecting MNT_RDONLY on bind(). Add
+  clip-devel support.
+  
+*clip-kernel-2.6.17.14 (18 Jan 2007)
+
+  18 Jan 2007; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.17.14.ebuild, +files/config-2.6.17.14:
+  Bump to latest 2.6.17, latest vserver/grsec. Add IUSE clip-lsm,
+  to apply the clip-lsm patch.
+  
+*clip-kernel-2.6.17-11-r3 (27 Nov 2006)
+
+  27 Nov 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.17.11-r3.ebuild, +files/config-2.6.17.11-r3:
+  New config, same patches : remove some more useless stuff : 
+  inotify, quotas, V4L2 (WTF was it doing here ?).
+
+  11 Oct 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.17.11-r2:
+  Remove VESAFB, which is not used and does not work anyway because 
+  of the lack of VM86 support (and iopl?).
+
+*clip-kernel-2.6.17-11-r2 (10 Oct 2006)
+
+  10 Oct 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +files/config-2.6.17.11-r2, +clip-kernel-2.6.17.11-r2.ebuild:
+  Same as -r1, but without the fbsplash patch that is not really
+  needed.
+
+  27 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.17.11-r1.ebuild:
+  Actually, the FINDTASK restriction plays havoc with vserver stop
+
+*clip-kernel-2.6.17.11-r1 (26 Sep 2006)
+
+  26 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +files/config-2.6.17.11-r1, +clip-kernel-2.6.17.11-r1.ebuild:
+  Bump patches, add a stricter PROC_MEMMAP option to grsec, that
+  also restricts /proc/self. Add more controls on chroots: no 
+  signals, no fchdir out, no ptrace.
+
+  18 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.17.11:
+  Switch from CONFIG_PREEMPT to CONFIG_PREEMPT_VOLUNTARY, since paX
+  apparently has some issues with PREEMPT...
+
+*clip-kernel-2.6.17.11 (04 Sep 2006)
+
+  03 Sep 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.17.11.ebuild, +files/config-2.6.17.11:
+  Bump to latest upstream. This includes the stable 2.0.2 release
+  for vserver. Also fixed config a bit (mostly, add missing PF_KEY
+  support, that should make racoon much happier).
+
+*clip-kernel-2.6.17.8 (25 Aug 2006)
+
+  25 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.17.8.ebuild, +files/config-2.6.17.8:
+  Version bump. Bump vserver to 2.0.2-rc28. Set TPE in config. 
+  Also remove grsec and vserver localversions from patch.
+  Add device-mapper support to official config file (been using 
+  it for a while now...).
+
+  01 Aug 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.17.7:
+  Set GRKERNSEC_IO=y in kernel, to disable the sys_ioperm and 
+  sys_iopl calls. X11 still works as long as x11-base/xorg-server
+  was built with USE=clip. See ClipChangeLog for that package for
+  the long story.
+  Also removed currently unused IUSE clip-splash. The external 
+  initrd method is much simpler to manage...
+
+*clip-kernel-2.6.17.7 (31 Jul 2006)
+
+  31 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.17.7.ebuild, files/config-2.6.17.7:
+  Bump to 2.6.17. Upgrade patchset to vs-2.0.2-rc27, and latest 
+  grsecurity stuff. Change ETYPE to "image" (cf ClipChangeLog 
+  for eclass/kernel-2). Config sets CONFIG_UID16, which seems to
+  be needed by dietlibc, and thus by util-vserver.
+  
+  28 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  clip-kernel-2.6.16.26.ebuild:
+  Mark -*, does not work properly with util-vserver.
+  
+*clip-kernel-2.6.16.26 (20 Jul 2006)
+
+  20 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.16.26.ebuild, +file/config-2.6.16.26,
+  +files/clip_initramfs-2.6.16.26.cpio.gz:
+  Version bump to linux-2.6.16.26. Same patchset.
+  
+  17 Jul 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.16.20-r1.ebuild:
+  Version bump to reflect new patchset, that fixes /proc suid
+  local root exploit (gentoo bug #140444).
+  
+  22 Jun 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  files/config-2.6.16.20:
+  Updated patchset, adding a patch that allows 'stricter' TPE 
+  that applies to every user, including root.
+
+*clip-kernel-2.6.16.20 (20 Jun 2006)
+  
+  20 Jun 2006; Vincent Strubel <clipos@ssi.gouv.fr>
+  +clip-kernel-2.6.16.20.ebuild:
+  Initial import. Source tree is based on vanilla 2.6.16.20 + 
+  vserver-2.0.2-rc22 + grsec-2.1.9. Config is pretty much as
+  restrictive as we can go. Replaces vserver-kernel.
+  Additional patches from gentoo-sources (genpatches.*-r12),
+  on top of grsec_vs):
+   - input.h fix for splashutils
+   - fbsplash (adapted : 4200 -> 4201)
+   - vesa-tng
+  All needed for a nice bootsplash :)
